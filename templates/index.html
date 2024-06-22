@@ -4,227 +4,69 @@
     <meta charset="UTF-8" />
     <title>Dislocation Detection</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      body {
-        font-family: Arial;
-        text-align: center;
-        margin: 0px auto;
-        padding-top: 30px;
-      }
-      /* Styles regarding the image elements*/
-      #image-container {
-        position: relative;
-        display: inline-block;
-      }
-      /* Image to load the stream video served by the ESP32 CAM */
-      img {
-        width: auto;
-        max-width: 100%;
-        height: auto;
-      }
-      /* style of the bounding boxes around the detected objects*/
-      .bounding-box {
-        position: absolute;
-        border: 2px solid;
-      }
-      /* style to hide the bounding boxes of the previous frames */
-      .hidden {
-        display: none;
-      }
-      /* Styles regarding the image elements end*/
-
-      /* Styles of the functional elements*/
-      /* go-buttons are used to move the robot car in different directions */
-      .go-button-container {
-        display: grid;
-        margin: 50px 20px;
-        justify-content: center;
-        gap: 0;
-        grid-template-columns: 150px 150px 150px;
-      }
-      .go-button {
-        background-color: #26a1c3;
-        border: solid 1px #000000;
-        color: #ffffff;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 18px;
-        padding: 6px 4px;
-        cursor: pointer;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-      }
-
-      /* process-buttons are used to process images taken by the camera 
-      and change the car control modes
-       */
-      .process-button-container {
-        display: grid;
-        gap: 10px 5px;
-        margin: 50px 20px;
-        justify-content: center;
-        grid-template-columns: 250px 250px 250px;
-      }
-
-      .process-button {
-        background-color: #2f4468;
-        border: none;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        display: flex;
-        font-size: 18px;
-        padding: 10px 20px;
-        margin: 0 10px;
-        cursor: pointer;
-        justify-content: center;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-      }
-      /*variable are the parameters of the motor speed and the servo position*/
-      .variable-container {
-        display: grid;
-        gap: 10px 10px;
-        margin: 50px auto;
-        justify-content: center;
-        grid-template-columns: 300px 50px 50px 50px;
-      }
-      .variable-label {
-        display: flex;
-        align-items: center;
-        text-align: left;
-        margin: 0;
-        color: #2640c3;
-        font-size: 18px;
-      }
-      .varInput {
-        display: flex;
-        background-color: #ffffff;
-        color: #ff0000;
-        padding: 0 3px;
-        margin: 0 3px;
-        justify-content: center;
-      }
-      /* Styles of the functional elements*/
-    </style>
+    <link rel="stylesheet" href="../static/css/serve.css" />
   </head>
   <body>
-    <h1>Autonomous Robot Car</h1>
+    <h1>Dislocation Detection</h1>
 
     <div id="image-container">
       <img src="" id="photo" />
     </div>
     <div class="process-button-container">
       <input type="file" id="iptUploadPhoto" accept="image/*" display="none" />
-      <button
-        class="process-button"
-        id="btnUploadPhoto"
-        onclick="uploadPhoto()"
-      >
-        Upload a photo
-      </button>
-      <button class="process-button" id="btnPredict">Predict</button>
+      <button class="process-button" id="btnUploadPhoto">Upload a photo</button>
+      <!-- <button class="process-button" id="btnPredict">Predict</button>
+      </button> -->
+      <button class="process-button" id="btnPredict">Predict (Roboflow)</button>
     </div>
-    <script>
-      function uploadPhoto() {
-        var fileInput = document.getElementById("iptUploadPhoto");
-        var previewImage = document.getElementById("photo");
-        // Check if file is selected
-        if (fileInput.files && fileInput.files[0]) {
-          var reader = new FileReader();
 
-          // Read the image file as a data URL
-          reader.onload = function (e) {
-            // Set the preview image source to the data URL
-            previewImage.src = e.target.result;
-            previewImage.style.display = "block"; // Show the image
-            var formData = new FormData();
+    <div class="inputSlider">
+      <label for="iptConfidence">Confidence</label>
+      <input
+        type="number"
+        id="iptConfidence"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.268"
+      />
+      <label for="sldConfidence">0</label>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.001"
+        value="0.268"
+        id="sldConfidence"
+      />
+      <label for="sldConfidence">1</label>
+    </div>
 
-            savePhotoToServer(fileInput.files[0]);
-          };
+    <div class="inputSlider">
+      <label for="iptOverlap">Overlap</label>
+      <input
+        type="number"
+        id="iptOverlap"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.5"
+      />
+      <label for="sldOverlap">0</label>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.001"
+        value="0.5"
+        id="sldOverlap"
+      />
+      <label for="sldOverlap">1</label>
+    </div>
 
-          // Load image file as a data URL
-          reader.readAsDataURL(fileInput.files[0]);
-        }
-      }
-      function savePhotoToServer(photoFile) {
-        var formData = new FormData();
-        formData.append("photo", photoFile);
+    <label for="txtSumBhi">Sum of all relative bounding box heights</label>
+    <input type="text" id="txtSumBhi" value="5.0" diasbled />
 
-        // Send HTTP POST request to server
-        fetch("/savePhoto", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => {
-            if (response.ok) {
-              console.log("Image uploaded successfully");
-            } else {
-              console.error("Failed to upload image");
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
-      document
-        .getElementById("btnPredict")
-        .addEventListener("click", async function () {
-          try {
-            const response = await fetch("/predict");
-            const bboxes = await response.json();
-            console.log(`prediction results: \n`, bboxes);
-            returnInfo = processBB(bboxes);
-          } catch (error) {
-            console.error(error);
-          }
-        });
-      const bbColors = ["red"];
-      function processBB(bboxes) {
-        // remove all the bounding boxes in the previous frames
-        const oldBBoxes = document.getElementsByClassName("bounding-box");
-        while (oldBBoxes.length > 0) {
-          oldBBoxes[0].parentNode.removeChild(oldBBoxes[0]);
-        }
-        var bbColor = "DarkRed"; // assign a dummy bounding box border colors
-        if (bboxes[0].length > 0) {
-          for (let i = 0; i < bboxes[0].length; i++) {
-            // drawing bounding boxes around the detected objects
-            const htmlBoundingBox = document.createElement("div");
-            htmlBoundingBox.className = "bounding-box";
-            document
-              .getElementById("image-container")
-              .appendChild(htmlBoundingBox);
-            // console.log("bbColor Index", bboxes[0][i]);
-            bbColor = bbColors[bboxes[0][i]];
-            htmlBoundingBox.style.left = `${
-              bboxes[2][i][0] - bboxes[2][i][2] / 2
-            }%`;
-            htmlBoundingBox.style.top = `${
-              bboxes[2][i][1] - bboxes[2][i][3] / 2
-            }%`;
-            htmlBoundingBox.style.width = `${bboxes[2][i][2]}%`;
-            htmlBoundingBox.style.height = `${bboxes[2][i][3]}%`;
-            htmlBoundingBox.style.borderColor = bbColor;
-            // drawing bounding boxes around the detected objects
-          }
-        }
-
-        return "predicted";
-      }
-
-      window.onload = async function () {};
-    </script>
+    <script src="../static/js/serve.js"></script>
   </body>
 </html>
