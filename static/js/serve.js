@@ -27,6 +27,23 @@ document
     }
   });
 
+const photoInput = document.getElementById("iptUploadPhoto");
+const textPhotoInput = document.getElementById("txtUploadPhoto");
+// const labelPhotoInput = document.querySelector('label[for="iptUploadPhoto"]');
+// labelPhotoInput.addEventListener("click", function () {
+//   photoInput.click();
+// });
+photoInput.addEventListener("click", async function selectPhoto(e) {
+  photoFile = e.target.files[0];
+  if (photoFile) {
+    textPhotoInput.value = photoFile.name;
+    console.log(`Selected File Name: `, photorFile.name);
+  } else {
+    textPhotoInput.value = "File not selected";
+  }
+});
+// let photoFileName = '';
+
 function savePhotoToServer(photoFile) {
   var formData = new FormData();
   formData.append("photo", photoFile);
@@ -143,6 +160,7 @@ function processBB(formattedResults) {
     }
   }
   document.getElementById("txtSumBhi").value = parseFloat(SumBhi).toFixed(2);
+  updateDisloDensity();
   console.log(`Sum of bhi: `, parseFloat(SumBhi).toFixed(2));
   return "predicted";
 }
@@ -208,5 +226,26 @@ inputSliders.forEach((pair) => {
   // Optional initial update
   // updateSlider();
 });
+
+function updateDisloDensity() {
+  const disloDensity = document.getElementById("txtDisloDensity");
+  var density =
+    (document.getElementById("txtSumBhi").value *
+      document.getElementById("txtImageHeight").value *
+      1e14) /
+    (document.getElementById("txtFilmArea").value *
+      document.getElementById("txtTEMSpecimenThickness").value);
+  disloDensity.value = density.toPrecision(2);
+}
+
+document
+  .getElementById("txtFilmArea")
+  .addEventListener("change", updateDisloDensity);
+document
+  .getElementById("txtTEMSpecimenThickness")
+  .addEventListener("change", updateDisloDensity);
+document
+  .getElementById("txtImageHeight")
+  .addEventListener("change", updateDisloDensity);
 
 window.onload = async function () {};
