@@ -27,14 +27,16 @@
       </div> -->
 
       <input type="file" id="iptUploadPhoto" accept="image/*" display="none" />
-
-      <button class="process-button" id="btnUploadPhoto">
-        Upload the photo
-      </button>
-      <!-- <button class="process-button" id="btnPredict">Predict</button>
-      </button> -->
+      <div>
+        <button class="process-button" id="btnUploadPhoto">
+          Upload the choosen photo
+        </button>
+        <input type="checkbox" id="chbUploadPhotoForTraining">
+        <label for="chbUploadPhotoForTraining">Allow to use the uploaded photo to improve model training </label>
+      </div>
       <button class="process-button" id="btnPredict">Predict (Roboflow)</button>
     </div>
+    
     <div class="calculations">
     <label for="txtSumBhi">Calculated sum of all relative bounding box heights &#8721<i>b</i><sub>hi</sub> : </label>
     <input type="number" id="txtSumBhi" value="5.0" diasbled />
