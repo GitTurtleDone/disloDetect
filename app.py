@@ -1,17 +1,19 @@
 import numpy as np
 from flask import Flask, request, render_template, redirect, url_for, jsonify
-from PIL import Image
 import requests
 from io import BytesIO
-from ultralytics import YOLO
 import os
 from werkzeug.utils import secure_filename
-import uuid
+
 from inference_sdk import InferenceHTTPClient
 import inference
 from inference_sdk import InferenceHTTPClient, InferenceConfiguration
 from datetime import datetime
 import shutil
+
+#from PIL import Image
+#from ultralytics import YOLO
+#import uuid
 app = Flask(__name__)
 
 # Initialize a global variables
@@ -80,7 +82,7 @@ def save_photo():
     
 
 
-model = YOLO('./runs/train35/weights/best.pt')
+#model = YOLO('./runs/train35/weights/best.pt')
 #-------------do NOT delete these codes -----------------
 # @app.route('/predict', methods=['GET','POST'])
 # def predictImage():
