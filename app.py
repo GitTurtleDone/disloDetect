@@ -30,7 +30,7 @@ files = [item for item in dirContents if os.path.isfile(os.path.join(saveTrainin
 # set the image_counter by counting all the files in the folder to be saved to
 imageCounter = len(files) + 1
 # connect to the model in Roboflow
-rbfModel = inference.get_model("dislodetect/4") # Roboflow Model
+# rbfModel = inference.get_model("dislodetect/4") # Roboflow Model
 confidence = 0.5;
 IoU = 0.5;
 
@@ -104,8 +104,7 @@ def save_photo():
 
 @app.route('/predict', methods=['GET','POST'])
 def predictImage():
-    global filePath, rbfModel, confidence, IoU
-    # image_url = "./Ref04_Fig4a_Rot.jpg"
+    global filePath, confidence, IoU #, rbfModel
     # response = requests.get(image_url)
     # img = Image.open(BytesIO(response.content))
     # # Generate the filename using the counter
@@ -133,5 +132,5 @@ def predictImage():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
 
