@@ -1,30 +1,36 @@
 import numpy as np
 from flask import Flask, request, render_template, redirect, url_for, jsonify
-from PIL import Image
 import requests
 from io import BytesIO
-from ultralytics import YOLO
 import os
 from werkzeug.utils import secure_filename
-import uuid
+
 from inference_sdk import InferenceHTTPClient
 import inference
 from inference_sdk import InferenceHTTPClient, InferenceConfiguration
+from datetime import datetime
+import shutil
 
+#from PIL import Image
+#from ultralytics import YOLO
+#import uuid
 app = Flask(__name__)
 
 # Initialize a global variables
 saveFolderPath = "./Public/SavedImages/"
-filepath = ""
+saveTrainingFolderPath = "./Public/ForTrainingImages/"
+filePath = ""
+trainingFilePath = ""
 app.config['UPLOAD_FOLDER'] = saveFolderPath
+app.config['UPLOAD_TRAINING_FOLDER'] = saveTrainingFolderPath
 # Use the os.listdir() function to get a list of all items (files and folders) in the directory
-dirContents = os.listdir(saveFolderPath)
+dirContents = os.listdir(saveTrainingFolderPath)
 # Look for image files in the folder
-files = [item for item in dirContents if os.path.isfile(os.path.join(saveFolderPath, item))]
+files = [item for item in dirContents if os.path.isfile(os.path.join(saveTrainingFolderPath, item))]
 # set the image_counter by counting all the files in the folder to be saved to
 imageCounter = len(files) + 1
 # connect to the model in Roboflow
-rbfModel = inference.get_model("dislodetect/4") # Roboflow Model
+# rbfModel = inference.get_model("dislodetect/4") # Roboflow Model
 confidence = 0.5;
 IoU = 0.5;
 
@@ -41,73 +47,43 @@ def favicon():
 
 @app.route('/savePhoto', methods=['GET','POST'])
 def save_photo():
-    global imageCounter, saveFolderPath, filepath
-    # if 'image' not in request.files:
-    #     return jsonify({'error': 'No image file uploaded'}), 400
+    global imageCounter, saveFolderPath, filePath, saveTrainingFolderPath, trainingFilePath
     for filename in os.listdir(saveFolderPath):
         file_path = os.path.join(saveFolderPath, filename)
         if os.path.isfile(file_path):  # Check if it's a file (not a directory)
             os.remove(file_path)
     imageFile = request.files['photo']
-    # if imageFile.filename == '':
-    #     return jsonify({'error': 'Empty filename'}), 400
-
-    # # Validate file type (optional)
-    # if not imageFile.mimetype.startswith('image/'):
-    #     return jsonify({'error': 'Invalid image file format.'}), 400
-    
-    # # Generate unique filename
-    # filename = secure_filename(imageFile.filename)
-    # new_filename = f"{uuid.uuid4()}.{filename.split('.')[-1]}"
-    
-    # # Save the image to the upload folder
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], imageFile.filename)
-    print(filepath)
-    imageFile.save(filepath)
-    
-    # # Return success message with image URL
-    # image_url = url_for('static', filename=f'uploads/{new_filename}')
+    imageFileName = imageFile.name
+    print('imageFileName: ', imageFileName)
+    filePath = os.path.join(app.config['UPLOAD_FOLDER'], imageFile.filename)
+    print(filePath)
+    imageFile.save(filePath)
+    chbTrainingPhoto = request.form.get('trainingPhoto', False)
+    print('chbTrainingPhoto: ', chbTrainingPhoto)
+    if chbTrainingPhoto=="true":
+        print('Went in if python: ', chbTrainingPhoto)
+        trainingFilePath = filePath
+        trainingFilePath = trainingFilePath.replace("SavedImages/", "ForTrainingImages/"+ str(imageCounter) + "_" + datetime.now().strftime("%Y%m%d%H%M%S") + "_")
+        print(trainingFilePath)        
+        shutil.copy2(filePath,trainingFilePath)
+        imageCounter += 1
     return jsonify({'success': True, 'url': "myurl"})
-    
-    
-    # image_url = "http://192.168.1.65/action?go=takePhoto"
-    # response = requests.get(image_url)
-    # img = Image.open(BytesIO(response.content))
-    # # Generate the filename using the counter
-    # filename = saveFolderPath + f"image{imageCounter}.jpg"
-    # img.save(filename)
 
-    # if 'image' not in request.files:
-    #     return redirect(request.url)  # Redirect on missing file
-  
-    # imageFile = request.files['image']
-    # # if imageFile.filename == '':
-    # #     return redirect(request.url)  # Redirect on empty filename
-
-    # # # Validate file type (optional)
-    # # if not imageFile.mimetype.startswith('image/'):
-    # #     return jsonify({'error': 'Invalid image file format.'}), 400
+# @app.route('/savePhotoForTraining', methods=['GET','POST'])
+# def savePhotoForTraining():
+#     global imageCounter
+#     imageFile = request.files['photo']
+#     print(f"training file name: {imageFile.name}")
+#     trainingFileName = str(imageCounter) + "_" + datetime.now().strftime("%Y%m%d%H%M%S") + "_" + imageFile.name
     
-    # # Generate unique filename
-    # # filename = secure_filename(imageFile.filename)
-    # # new_filename = f"{uuid.uuid4()}.{filename.split('.')[-1]}"
+#     return jsonify({'success': True, 'url': "myurl"})
     
-    # # Save the image to the upload folder
-    # filepath = os.path.join(app.config['UPLOAD_FOLDER'], imageFile.filename)
-    # imageFile.save(filepath)
-    
-    # # Return success message with image URL (optional)
-    # image_url = url_for('static', filename=f'uploads/{imageFile.filename}')
-    # imageCounter += 1
-    # return jsonify({'success': True, 'url': image_url})
     
     
 
-    # return "Image downloaded and saved as " + filename
 
-
-model = YOLO('./runs/train35/weights/best.pt')
-
+#model = YOLO('./runs/train35/weights/best.pt')
+#-------------do NOT delete these codes -----------------
 # @app.route('/predict', methods=['GET','POST'])
 # def predictImage():
 #     global model
@@ -124,11 +100,11 @@ model = YOLO('./runs/train35/weights/best.pt')
 #     # return bboxes, the last line contains coordinates in percentage
 #     print(returnData)
 #     return  returnData
+#-------------do NOT delete these codes -----------------
 
 @app.route('/predict', methods=['GET','POST'])
 def predictImage():
-    global filepath, rbfModel, confidence, IoU
-    # image_url = "./Ref04_Fig4a_Rot.jpg"
+    global filePath, confidence, IoU #, rbfModel
     # response = requests.get(image_url)
     # img = Image.open(BytesIO(response.content))
     # # Generate the filename using the counter
@@ -147,14 +123,14 @@ def predictImage():
 
     # infer on a local image
     with CLIENT.use_configuration(customConfiguration):
-        result = CLIENT.infer(filepath, model_id="dislodetect/4")
-    #result = CLIENT.infer(filepath, model_id="dislodetect/4", confidence_threshold = 0.268)
+        result = CLIENT.infer(filePath, model_id="dislodetect/4")
+    #result = CLIENT.infer(filePath, model_id="dislodetect/4", confidence_threshold = 0.268)
     print(result)
-    # result = rbfModel.infer(image=filepath, confidence = 0.268, iou_threshold=0.5)
+    # result = rbfModel.infer(image=filePath, confidence = 0.268, iou_threshold=0.5)
     # print(result)
     return  (result)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
 

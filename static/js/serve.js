@@ -18,8 +18,12 @@ document
         previewImage.style.display = "block"; // Show the image
         var formData = new FormData();
         uploadedFileName = fileInput.files[0].name;
+        const chbTrainingPhoto = document.getElementById(
+          "chbUploadPhotoForTraining"
+        );
+        savePhotoToServer(fileInput.files[0], chbTrainingPhoto.checked);
+        console.log("chbTrainingPhoto.checked", chbTrainingPhoto.checked);
         console.log(`The file ${uploadedFileName} has been uploaded"`);
-        savePhotoToServer(fileInput.files[0]);
       };
 
       // Load image file as a data URL
@@ -27,10 +31,23 @@ document
     }
   });
 
-function savePhotoToServer(photoFile) {
+const photoInput = document.getElementById("iptUploadPhoto");
+const textPhotoInput = document.getElementById("txtUploadPhoto");
+
+photoInput.addEventListener("click", async function selectPhoto(e) {
+  photoFile = e.target.files[0];
+  if (photoFile) {
+    textPhotoInput.value = photoFile.name;
+    console.log(`Selected File Name: `, photorFile.name);
+  } else {
+    textPhotoInput.value = "File not selected";
+  }
+});
+
+function savePhotoToServer(photoFile, chbTrainingPhotoChecked) {
   var formData = new FormData();
   formData.append("photo", photoFile);
-
+  formData.append("trainingPhoto", chbTrainingPhotoChecked);
   // Send HTTP POST request to server
   fetch("/savePhoto", {
     method: "POST",
@@ -38,6 +55,11 @@ function savePhotoToServer(photoFile) {
   })
     .then((response) => {
       if (response.ok) {
+        chbTrainingPhotoChecked = false;
+        const chbTrainingPhoto = document.getElementById(
+          "chbUploadPhotoForTraining"
+        );
+        chbTrainingPhoto.checked = false;
         console.log("Image uploaded successfully");
       } else {
         console.error("Failed to upload image");
@@ -47,6 +69,28 @@ function savePhotoToServer(photoFile) {
       console.error("Error:", error);
     });
 }
+
+// function savePhotoForTraining(photoFile) {
+//   var formData = new FormData();
+//   formData.append("photo", photoFile);
+
+//   // Send HTTP POST request to server
+//   fetch("/savePhotoForTraining", {
+//     method: "POST",
+//     body: formData,
+//   })
+//     .then((response) => {
+//       if (response.ok) {
+//         console.log("Image uploaded successfully");
+//       } else {
+//         console.error("Failed to upload image");
+//       }
+//     })
+//     .catch((error) => {
+//       console.error("Error:", error);
+//     });
+// }
+
 // document
 //   .getElementById("btnPredict")
 //   .addEventListener("click", async function () {
@@ -130,19 +174,12 @@ function processBB(formattedResults) {
       htmlBoundingBox.style.width = `${bboxes[i][2]}%`;
       htmlBoundingBox.style.height = `${bboxes[i][3]}%`;
       htmlBoundingBox.style.borderColor = bbColor;
-      // if (i < 3) {
-      //   console.log(`bb ${i} \
-      //             left: ${htmlBoundingBox.style.left} \
-      //             top: ${htmlBoundingBox.style.top} \
-      //             width: ${htmlBoundingBox.style.width} \
-      //             height: ${htmlBoundingBox.style.height} \
-      //              `);
-      // }
       SumBhi += bboxes[i][3] / 100;
       // drawing bounding boxes around the detected objects
     }
   }
   document.getElementById("txtSumBhi").value = parseFloat(SumBhi).toFixed(2);
+  updateDisloDensity();
   console.log(`Sum of bhi: `, parseFloat(SumBhi).toFixed(2));
   return "predicted";
 }
@@ -208,5 +245,26 @@ inputSliders.forEach((pair) => {
   // Optional initial update
   // updateSlider();
 });
+
+function updateDisloDensity() {
+  const disloDensity = document.getElementById("txtDisloDensity");
+  var density =
+    (document.getElementById("txtSumBhi").value *
+      document.getElementById("txtImageHeight").value *
+      1e14) /
+    (document.getElementById("txtFilmArea").value *
+      document.getElementById("txtTEMSpecimenThickness").value);
+  disloDensity.value = density.toPrecision(2);
+}
+
+document
+  .getElementById("txtFilmArea")
+  .addEventListener("change", updateDisloDensity);
+document
+  .getElementById("txtTEMSpecimenThickness")
+  .addEventListener("change", updateDisloDensity);
+document
+  .getElementById("txtImageHeight")
+  .addEventListener("change", updateDisloDensity);
 
 window.onload = async function () {};
