@@ -103,11 +103,11 @@ img {
   justify-content: center;
 }
 
-#txtSumBhi {
+#optSumBhi {
   pointer-events: none;
   background-color: #aaff00;
 }
-#txtDisloDensity {
+#optDisloDensity {
   pointer-events: none;
   background-color: #d3d3d3;
 }
