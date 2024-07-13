@@ -91,6 +91,10 @@ function savePhotoToServer(photoFile, chbTrainingPhotoChecked) {
 //     });
 // }
 
+//--------do NOT delete, predict (roboflow) implementation------------
+//--------do NOT delete, predict (roboflow) implementation------------
+//--------do NOT delete, predict (roboflow) implementation------------
+
 // document
 //   .getElementById("btnPredict")
 //   .addEventListener("click", async function () {
@@ -104,87 +108,91 @@ function savePhotoToServer(photoFile, chbTrainingPhotoChecked) {
 //     }
 //   });
 
-document
-  .getElementById("btnPredict")
-  .addEventListener("click", async function () {
-    predict();
-  });
+// document
+//   .getElementById("btnPredict")
+//   .addEventListener("click", async function () {
+//     predict();
+//   });
 
-async function predict() {
-  try {
-    removeOldBB();
-    const confidence = document.getElementById("iptConfidence").value;
-    const overlap = document.getElementById("iptOverlap").value;
-    const response = await fetch("/predict", {
-      method: "POST",
-      body: JSON.stringify({ confidence, overlap }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const results = await response.json();
-    console.log(`results: \n`, results);
-    formattedResults = formatResults(results);
-    console.log(`Formatted results: \n`, formattedResults);
-    processBB(formattedResults);
-    //   returnInfo = processBB(bboxes);
-  } catch (error) {
-    console.error(error);
-  }
-}
+// async function predict() {
+//   try {
+//     removeOldBB();
+//     const confidence = document.getElementById("iptConfidence").value;
+//     const overlap = document.getElementById("iptOverlap").value;
+//     const response = await fetch("/predict", {
+//       method: "POST",
+//       body: JSON.stringify({ confidence, overlap }),
+//       headers: { "Content-Type": "application/json" },
+//     });
+//     const results = await response.json();
+//     console.log(`results: \n`, results);
+//     formattedResults = formatResults(results);
+//     console.log(`Formatted results: \n`, formattedResults);
+//     processBB(formattedResults);
+//     //   returnInfo = processBB(bboxes);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 
-function formatResults(results) {
-  let bboxes = [];
-  let imageWidth = results["image"]["width"];
-  let imageHeight = results["image"]["height"];
-  results["predictions"].forEach((bb) => {
-    console.log(bb);
-    bboxes.push([
-      (bb["x"] / imageWidth) * 100,
-      (bb["y"] / imageHeight) * 100,
-      (bb["width"] / imageWidth) * 100,
-      (bb["height"] / imageHeight) * 100,
-      bb["confidence"],
-    ]);
-  });
-  return [results["image"]["width"], results["image"]["height"], bboxes];
-}
+// function formatResults(results) {
+//   let bboxes = [];
+//   let imageWidth = results["image"]["width"];
+//   let imageHeight = results["image"]["height"];
+//   results["predictions"].forEach((bb) => {
+//     console.log(bb);
+//     bboxes.push([
+//       (bb["x"] / imageWidth) * 100,
+//       (bb["y"] / imageHeight) * 100,
+//       (bb["width"] / imageWidth) * 100,
+//       (bb["height"] / imageHeight) * 100,
+//       bb["confidence"],
+//     ]);
+//   });
+//   return [results["image"]["width"], results["image"]["height"], bboxes];
+// }
 
-function removeOldBB() {
-  const oldBBoxes = document.getElementsByClassName("bounding-box");
-  while (oldBBoxes.length > 0) {
-    oldBBoxes[0].parentNode.removeChild(oldBBoxes[0]);
-  }
-}
-const bbColors = ["red"];
-function processBB(formattedResults) {
-  // remove all the bounding boxes in the previous frames
-  bboxes = formattedResults[2];
-  let SumBhi = 0;
-  console.log(`bboxes: `, bboxes);
-  removeOldBB();
-  let bbColor = "DarkRed"; // assign a dummy bounding box border colors
-  if (bboxes.length > 0) {
-    for (let i = 0; i < bboxes.length; i++) {
-      // drawing bounding boxes around the detected objects
-      const htmlBoundingBox = document.createElement("div");
-      htmlBoundingBox.className = "bounding-box";
-      document.getElementById("image-container").appendChild(htmlBoundingBox);
-      // console.log("bbColor Index", bboxes[0][i]);
-      htmlBoundingBox.style.left = `${bboxes[i][0] - bboxes[i][2] / 2}%`;
-      htmlBoundingBox.style.top = `${bboxes[i][1] - bboxes[i][3] / 2}%`;
-      htmlBoundingBox.style.width = `${bboxes[i][2]}%`;
-      htmlBoundingBox.style.height = `${bboxes[i][3]}%`;
-      htmlBoundingBox.style.borderColor = bbColor;
-      SumBhi += bboxes[i][3] / 100;
-      // drawing bounding boxes around the detected objects
-    }
-  }
-  document.getElementById("txtSumBhi").value = parseFloat(SumBhi).toFixed(2);
-  updateDisloDensity();
-  console.log(`Sum of bhi: `, parseFloat(SumBhi).toFixed(2));
-  return "predicted";
-}
+// function removeOldBB() {
+//   const oldBBoxes = document.getElementsByClassName("bounding-box");
+//   while (oldBBoxes.length > 0) {
+//     oldBBoxes[0].parentNode.removeChild(oldBBoxes[0]);
+//   }
+// }
+// const bbColors = ["red"];
+// function processBB(formattedResults) {
+//   // remove all the bounding boxes in the previous frames
+//   bboxes = formattedResults[2];
+//   let SumBhi = 0;
+//   console.log(`bboxes: `, bboxes);
+//   removeOldBB();
+//   let bbColor = "DarkRed"; // assign a dummy bounding box border colors
+//   if (bboxes.length > 0) {
+//     for (let i = 0; i < bboxes.length; i++) {
+//       // drawing bounding boxes around the detected objects
+//       const htmlBoundingBox = document.createElement("div");
+//       htmlBoundingBox.className = "bounding-box";
+//       document.getElementById("image-container").appendChild(htmlBoundingBox);
+//       // console.log("bbColor Index", bboxes[0][i]);
+//       htmlBoundingBox.style.left = `${bboxes[i][0] - bboxes[i][2] / 2}%`;
+//       htmlBoundingBox.style.top = `${bboxes[i][1] - bboxes[i][3] / 2}%`;
+//       htmlBoundingBox.style.width = `${bboxes[i][2]}%`;
+//       htmlBoundingBox.style.height = `${bboxes[i][3]}%`;
+//       htmlBoundingBox.style.borderColor = bbColor;
+//       SumBhi += bboxes[i][3] / 100;
+//       // drawing bounding boxes around the detected objects
+//     }
+//   }
+//   document.getElementById("txtSumBhi").value = parseFloat(SumBhi).toFixed(2);
+//   updateDisloDensity();
+//   console.log(`Sum of bhi: `, parseFloat(SumBhi).toFixed(2));
+//   return "predicted";
+// }
+//--------do NOT delete, predict (roboflow) implementation------------
+//--------do NOT delete, predict (roboflow) implementation------------
+//--------do NOT delete, predict (roboflow) implementation------------
 
 // function updateSlider(strSldID, strSldDisplay, strFlaskEndPoint) {
+
 //   const slider = document.getElementById(strSldID);
 //   const valueDisplay = document.getElementById(strSldDisplay);
 //   const newValue = slider.value;
@@ -218,7 +226,71 @@ function processBB(formattedResults) {
 //   );
 //   predict1();
 // }
+//------------------------Predict (ultralytics)--------------
+document
+  .getElementById("btnPredict")
+  .addEventListener("click", async function () {
+    predict();
+  });
 
+async function predict() {
+  try {
+    removeOldBB();
+    const confidence = document.getElementById("iptConfidence").value;
+    const overlap = document.getElementById("iptOverlap").value;
+    const response = await fetch("/predict", {
+      method: "POST",
+      body: JSON.stringify({ confidence, overlap }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const results = await response.json();
+    console.log(`results: \n`, results);
+    // formattedResults = formatResults(results);
+    //console.log(`Formatted results: \n`, formattedResults);
+    processBB(results);
+    //   returnInfo = processBB(bboxes);
+  } catch (error) {
+    console.error(error);
+  }
+  return "predicted";
+}
+
+function removeOldBB() {
+  const oldBBoxes = document.getElementsByClassName("bounding-box");
+  while (oldBBoxes.length > 0) {
+    oldBBoxes[0].parentNode.removeChild(oldBBoxes[0]);
+  }
+}
+
+function processBB(results) {
+  // remove all the bounding boxes in the previous frames
+  bboxes = results[2];
+  let SumBhi = 0;
+  console.log(`bboxes: `, bboxes);
+  // removeOldBB();
+  let bbColor = "DarkRed"; // assign a dummy bounding box border colors
+  if (bboxes.length > 0) {
+    for (let i = 0; i < bboxes.length; i++) {
+      // drawing bounding boxes around the detected objects
+      const htmlBoundingBox = document.createElement("div");
+      htmlBoundingBox.className = "bounding-box";
+      document.getElementById("image-container").appendChild(htmlBoundingBox);
+      // console.log("bbColor Index", bboxes[0][i]);
+      htmlBoundingBox.style.left = `${bboxes[i][0] - bboxes[i][2] / 2}%`;
+      htmlBoundingBox.style.top = `${bboxes[i][1] - bboxes[i][3] / 2}%`;
+      htmlBoundingBox.style.width = `${bboxes[i][2]}%`;
+      htmlBoundingBox.style.height = `${bboxes[i][3]}%`;
+      htmlBoundingBox.style.borderColor = bbColor;
+      SumBhi += bboxes[i][3] / 100;
+      // drawing bounding boxes around the detected objects
+    }
+  }
+  document.getElementById("txtSumBhi").value = parseFloat(SumBhi).toFixed(2);
+  updateDisloDensity();
+  console.log(`Sum of bhi: `, parseFloat(SumBhi).toFixed(2));
+  return "predicted";
+}
+//------------------------Predict (ultralytics)--------------
 const inputSliders = document.querySelectorAll(".inputSlider");
 
 inputSliders.forEach((pair) => {

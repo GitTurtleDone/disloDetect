@@ -1,6 +1,7 @@
 Flask==3.0.0
 gunicorn
 Werkzeug==3.0.0
-inference
-inference-cli
-opencv-python-headless
+# inference
+# inference-cli
+ultralytics==8.0.202
+# opencv-python-headless

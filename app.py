@@ -4,15 +4,20 @@ import requests
 from io import BytesIO
 import os
 from werkzeug.utils import secure_filename
-
-from inference_sdk import InferenceHTTPClient
-import inference
-from inference_sdk import InferenceHTTPClient, InferenceConfiguration
+# //--------do NOT delete, predict (roboflow) implementation------------
+# //--------do NOT delete, predict (roboflow) implementation------------
+# //--------do NOT delete, predict (roboflow) implementation------------
+# from inference_sdk import InferenceHTTPClient
+# import inference
+# from inference_sdk import InferenceHTTPClient, InferenceConfiguration
+#//--------do NOT delete, predict (roboflow) implementation------------
+#//--------do NOT delete, predict (roboflow) implementation------------
+#//--------do NOT delete, predict (roboflow) implementation------------
 from datetime import datetime
 import shutil
 
 #from PIL import Image
-#from ultralytics import YOLO
+from ultralytics import YOLO
 #import uuid
 app = Flask(__name__)
 
@@ -82,54 +87,64 @@ def save_photo():
     
 
 
-#model = YOLO('./runs/train35/weights/best.pt')
+model = YOLO('./runs/GCL/train36/weights/best.pt')
 #-------------do NOT delete these codes -----------------
-# @app.route('/predict', methods=['GET','POST'])
-# def predictImage():
-#     global model
-#     # image_url = "./Ref04_Fig4a_Rot.jpg"
-#     # response = requests.get(image_url)
-#     # img = Image.open(BytesIO(response.content))
-#     # # Generate the filename using the counter
-#     # filename = f"./PredictedImages/image.jpg"
-#     # img.save(filename)
-#     result = model.predict(source=saveFolderPath, classes=None, conf=0.268)
-#     returnData = ([result[0].boxes.cls.cpu().numpy().tolist(),
-#             result[0].boxes.conf.cpu().numpy().tolist(),
-#             (result[0].boxes.xywhn.cpu().numpy()*100).tolist()])
-#     # return bboxes, the last line contains coordinates in percentage
-#     print(returnData)
-#     return  returnData
-#-------------do NOT delete these codes -----------------
-
 @app.route('/predict', methods=['GET','POST'])
 def predictImage():
-    global filePath, confidence, IoU #, rbfModel
+    global model, filePath, confidence, IoU
+    # image_url = "./Ref04_Fig4a_Rot.jpg"
     # response = requests.get(image_url)
     # img = Image.open(BytesIO(response.content))
     # # Generate the filename using the counter
     # filename = f"./PredictedImages/image.jpg"
     # img.save(filename)
-    # initialize the client
     data = request.get_json()
-    confidence = data.get('confidence')
-    IoU = data.get('overlap')
-    print (f"Confidence: {confidence} Overlap: {IoU}")
-    customConfiguration = InferenceConfiguration(confidence_threshold= confidence, iou_threshold = IoU)
-    CLIENT = InferenceHTTPClient(
-        api_url="https://detect.roboflow.com",
-        api_key="gf6lCijDiZMJtLqvxQhB"
-    )
+    confidence = float(data.get('confidence'))
+    IoU = float(data.get('overlap'))
+    result = model.predict(source=filePath, classes=None, conf=confidence, iou=IoU)
+    returnData = ([result[0].boxes.cls.cpu().numpy().tolist(),
+            result[0].boxes.conf.cpu().numpy().tolist(),
+            (result[0].boxes.xywhn.cpu().numpy()*100).tolist()])
+    # return bboxes, the last line contains coordinates in percentage
+    print(returnData)
+    return  returnData
+#-------------do NOT delete these codes -----------------
 
-    # infer on a local image
-    with CLIENT.use_configuration(customConfiguration):
-        result = CLIENT.infer(filePath, model_id="dislodetect/4")
-    #result = CLIENT.infer(filePath, model_id="dislodetect/4", confidence_threshold = 0.268)
-    print(result)
-    # result = rbfModel.infer(image=filePath, confidence = 0.268, iou_threshold=0.5)
-    # print(result)
-    return  (result)
 
+
+# //--------do NOT delete, predict (roboflow) implementation------------
+# //--------do NOT delete, predict (roboflow) implementation------------
+# //--------do NOT delete, predict (roboflow) implementation------------
+# @app.route('/predict', methods=['GET','POST'])
+# def predictImage():
+#     global filePath, confidence, IoU #, rbfModel
+#     # response = requests.get(image_url)
+#     # img = Image.open(BytesIO(response.content))
+#     # # Generate the filename using the counter
+#     # filename = f"./PredictedImages/image.jpg"
+#     # img.save(filename)
+#     # initialize the client
+#     data = request.get_json()
+#     confidence = data.get('confidence')
+#     IoU = data.get('overlap')
+#     print (f"Confidence: {confidence} Overlap: {IoU}")
+#     customConfiguration = InferenceConfiguration(confidence_threshold= confidence, iou_threshold = IoU)
+#     CLIENT = InferenceHTTPClient(
+#         api_url="https://detect.roboflow.com",
+#         api_key="gf6lCijDiZMJtLqvxQhB"
+#     )
+
+#     # infer on a local image
+#     with CLIENT.use_configuration(customConfiguration):
+#         result = CLIENT.infer(filePath, model_id="dislodetect/4")
+#     #result = CLIENT.infer(filePath, model_id="dislodetect/4", confidence_threshold = 0.268)
+#     print(result)
+#     # result = rbfModel.infer(image=filePath, confidence = 0.268, iou_threshold=0.5)
+#     # print(result)
+#     return  (result)
+# //--------do NOT delete, predict (roboflow) implementation------------
+# //--------do NOT delete, predict (roboflow) implementation------------
+# //--------do NOT delete, predict (roboflow) implementation------------
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
