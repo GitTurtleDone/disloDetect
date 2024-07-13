@@ -12,7 +12,7 @@ from datetime import datetime
 import shutil
 
 #from PIL import Image
-#from ultralytics import YOLO
+from ultralytics import YOLO
 #import uuid
 app = Flask(__name__)
 
@@ -82,24 +82,27 @@ def save_photo():
     
 
 
-#model = YOLO('./runs/train35/weights/best.pt')
+model = YOLO('./runs/GCL/train36/weights/best.pt')
 #-------------do NOT delete these codes -----------------
-# @app.route('/predict', methods=['GET','POST'])
-# def predictImage():
-#     global model
-#     # image_url = "./Ref04_Fig4a_Rot.jpg"
-#     # response = requests.get(image_url)
-#     # img = Image.open(BytesIO(response.content))
-#     # # Generate the filename using the counter
-#     # filename = f"./PredictedImages/image.jpg"
-#     # img.save(filename)
-#     result = model.predict(source=saveFolderPath, classes=None, conf=0.268)
-#     returnData = ([result[0].boxes.cls.cpu().numpy().tolist(),
-#             result[0].boxes.conf.cpu().numpy().tolist(),
-#             (result[0].boxes.xywhn.cpu().numpy()*100).tolist()])
-#     # return bboxes, the last line contains coordinates in percentage
-#     print(returnData)
-#     return  returnData
+@app.route('/predict1', methods=['GET','POST'])
+def predictImage1():
+    global model, filePath, confidence, IoU
+    # image_url = "./Ref04_Fig4a_Rot.jpg"
+    # response = requests.get(image_url)
+    # img = Image.open(BytesIO(response.content))
+    # # Generate the filename using the counter
+    # filename = f"./PredictedImages/image.jpg"
+    # img.save(filename)
+    data = request.get_json()
+    confidence = float(data.get('confidence'))
+    IoU = float(data.get('overlap'))
+    result = model.predict(source=filePath, classes=None, conf=confidence, iou=IoU)
+    returnData = ([result[0].boxes.cls.cpu().numpy().tolist(),
+            result[0].boxes.conf.cpu().numpy().tolist(),
+            (result[0].boxes.xywhn.cpu().numpy()*100).tolist()])
+    # return bboxes, the last line contains coordinates in percentage
+    print(returnData)
+    return  returnData
 #-------------do NOT delete these codes -----------------
 
 @app.route('/predict', methods=['GET','POST'])
