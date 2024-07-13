@@ -83,7 +83,7 @@ img {
   gap: 10px 20px;
   margin: 50px 20px;
   justify-content: center;
-  grid-template-rows: repeat(4, auto);
+  grid-template-rows: repeat(3, auto);
 }
 
 .inputSlider {
