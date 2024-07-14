@@ -39,16 +39,42 @@
     </div>
     
     <div class="calculations">
-    <label for="optSumBhi">Calculated sum of all relative bounding box heights &#8721<i>b</i><sub>hi</sub> : </label>
-    <input type="number" id="optSumBhi" value="3.46" diasbled />
-    <label for="optDisloDensity">Calculated dislocation density &#961 = &#8721<i>b</i><sub>hi</sub> * <i>H</i><sub>image</sub>/(<i>A</i><sub>f</sub>*<i>t</i>) (cm<sup>-2</sup>) : </label>
-    <input type="number" id="optDisloDensity" value="3.3e+10" diasbled />
-    <label for="iptFilmArea">Insert the film area <i>A</i><sub>f</sub> (nm<sup>2</sup>) : </label>
-    <input type="number" id="iptFilmArea" value="8.6e4"/>
-    <label for="iptTEMSpecimenThickness">Insert the thickness of the TEM specimen<i>t</i> (nm) : </label>
-    <input type="number" id="iptTEMSpecimenThickness" value="100" diasbled />
-    <label for="iptImageHeight">Insert the height of the whole image <i>H</i><sub>image</sub> (nm): </label>
-    <input type="number" id="iptImageHeight" value="825" diasbled />
+      <label for="optSumBhi">Calculated sum of all relative bounding box heights &#8721<i>b</i><sub>hi</sub>:</label>
+      <input type="number" id="optSumBhi" value="3.46" diasbled />
+      <label for="optDisloDensity">Calculated dislocation density &#961 = &#8721<i>b</i><sub>hi</sub> * <i>H</i><sub>image</sub>/(<i>A</i><sub>f</sub>*<i>t</i>) (cm<sup>-2</sup>): </label>
+      
+      <input type="number" id="optDisloDensity" value="3.3e+10" diasbled />
+      <div>
+        <div>
+          <label for="iptFilmArea">Insert the film area <i>A</i><sub>f</sub> (nm<sup>2</sup>):<sup><img src="../static/images/InfoIcon.png" class="info-icon" alt="Information"></sup> </label>
+          
+          <div class="explanation" style="display: none;">
+            <img src="../static/images/ParamExplainAf.jpg">
+          </div>
+        </div>
+      </div>
+      <input type="number" id="iptFilmArea" value="8.6e4"/>
+      
+      <div>
+        <div>
+          <label for="iptTEMSpecimenThickness">Insert the thickness of the TEM specimen <i>t</i> (nm):<sup><img src="../static/images/InfoIcon.png" class="info-icon" alt="Information"></sup> </label>
+          
+          <div class="explanation" style="display: none;">
+            <img src="../static/images/ParamExplain_t.jpg">
+          </div>
+        </div>
+      </div>
+      <input type="number" id="iptTEMSpecimenThickness" value="100" diasbled />
+    
+      <div>
+        <div>
+          <label for="iptImageHeight">Insert the height of the whole image <i>H</i><sub>image</sub> (nm):<sup><img src="../static/images/InfoIcon.png" class="info-icon" alt="Information"></sup> </label>
+          <div class="explanation" style="display: none;">
+            <img src="../static/images/ParamExplainHimage.jpg">
+          </div>
+        </div>
+      </div>
+      <input type="number" id="iptImageHeight" value="825" diasbled />
   </div>
     <div class="inputSlider">
       <label for="iptConfidence" style="justify-self: left;">Confidence</label>

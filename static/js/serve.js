@@ -337,6 +337,33 @@ function updateDisloDensity() {
       document.getElementById("iptTEMSpecimenThickness").value);
   disloDensity.value = density.toPrecision(2);
 }
+let isExplanationVisible = false;
+const infoIcons = document.querySelectorAll(".info-icon");
+const explanations = document.querySelectorAll(".explanation");
+
+infoIcons.forEach((infoIcon, index) => {
+  infoIcon.addEventListener("click", () => {
+    const rect = infoIcon.getBoundingClientRect();
+    explanations[index].style.top = `${rect.top}px`;
+    explanations[index].style.left = `${rect.left}px`;
+    explanations[index].style.display = "flex";
+    // console.log("Explanation shown");
+  });
+  explanations[index].addEventListener("click", () => {
+    explanations[index].style.display = "none";
+  });
+  explanations[index].addEventListener("mouseleave", () => {
+    explanations[index].style.display = "none";
+  });
+});
+
+// window.addEventListener("click", (event) => {
+//   if (!explanation.contains(event.target) && isExplanationVisible) {
+//     explanation.style.display = "none";
+//     isExplanationVisible = false;
+//     console.log("Explanation hidden");
+//   }
+// });
 
 function resetApp() {
   document.getElementById("iptConfidence").value = dftConf;
