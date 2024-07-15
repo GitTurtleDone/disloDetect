@@ -11,6 +11,7 @@
 
     <div id="image-container">
       <img src="" id="photo" />
+      
     </div>
     <div class="process-button-container">
       <!-- <div class="fileSelection">
@@ -25,11 +26,11 @@
         </label>
         <input type="text" id="txtUploadPhoto" readonly />
       </div> -->
-
+      <p>Currently, the model is trained only with weak beam dark fied TEM images</p>
       <input type="file" id="iptUploadPhoto" accept="image/*" display="none" />
       <div>
         <button class="process-button" id="btnUploadPhoto">
-          Upload the choosen photo
+          Upload the chosen photo
         </button>
         <input type="checkbox" id="chbUploadPhotoForTraining">
         <label for="chbUploadPhotoForTraining">Allow to use the uploaded photo to improve model training </label>
@@ -119,7 +120,9 @@
       />
       <label for="sldOverlap">1</label>
     </div>
-
+    <footer>
+      <p class="copyright">&copy; 2024 Giang T. Dang. All rights reserved. </p>
+    </footer>
     
 
     <script src="../static/js/serve.js"></script>

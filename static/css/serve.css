@@ -5,6 +5,12 @@ body {
   padding-top: 30px;
 }
 
+.copyright {
+  text-align: center;
+  font-size: large;
+  color: #000000;
+}
+
 /* input[type="file"] {
   background-color: #2f4468;
   border: none;
