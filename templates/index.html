@@ -11,6 +11,7 @@
 
     <div id="image-container">
       <img src="" id="photo" />
+      
     </div>
     <div class="process-button-container">
       <!-- <div class="fileSelection">
@@ -25,11 +26,11 @@
         </label>
         <input type="text" id="txtUploadPhoto" readonly />
       </div> -->
-
+      <p>Currently, the model is trained only with weak beam dark fied TEM images</p>
       <input type="file" id="iptUploadPhoto" accept="image/*" display="none" />
       <div>
         <button class="process-button" id="btnUploadPhoto">
-          Upload the choosen photo
+          Upload the chosen photo
         </button>
         <input type="checkbox" id="chbUploadPhotoForTraining">
         <label for="chbUploadPhotoForTraining">Allow to use the uploaded photo to improve model training </label>
@@ -39,16 +40,42 @@
     </div>
     
     <div class="calculations">
-    <label for="txtSumBhi">Calculated sum of all relative bounding box heights &#8721<i>b</i><sub>hi</sub> : </label>
-    <input type="number" id="txtSumBhi" value="5.0" diasbled />
-    <label for="txtDisloDensity">Calculated dislocation density &#961 = &#8721<i>b</i><sub>hi</sub> * <i>H</i><sub>image</sub>/(<i>A</i><sub>f</sub>*<i>t</i>) (cm<sup>-2</sup>) : </label>
-    <input type="number" id="txtDisloDensity" value="1e+10" diasbled />
-    <label for="txtFilmArea">Insert the film area <i>A</i><sub>f</sub> (nm<sup>2</sup>) : </label>
-    <input type="number" id="txtFilmArea" value="1e5"/>
-    <label for="txtTEMSpecimenThickness">Insert the thickness of the TEM specimen<i>t</i> (nm) : </label>
-    <input type="number" id="txtTEMSpecimenThickness" value="100" diasbled />
-    <label for="txtImageHeight">Insert the height of the whole image <i>H</i><sub>image</sub> (nm): </label>
-    <input type="number" id="txtImageHeight" value="500" diasbled />
+      <label for="optSumBhi">Calculated sum of all relative bounding box heights &#8721<i>b</i><sub>hi</sub>:</label>
+      <input type="number" id="optSumBhi" value="3.46" diasbled />
+      <label for="optDisloDensity">Calculated dislocation density &#961 = &#8721<i>b</i><sub>hi</sub> * <i>H</i><sub>image</sub>/(<i>A</i><sub>f</sub>*<i>t</i>) (cm<sup>-2</sup>): </label>
+      
+      <input type="number" id="optDisloDensity" value="3.3e+10" diasbled />
+      <div>
+        <div>
+          <label for="iptFilmArea">Insert the film area <i>A</i><sub>f</sub> (nm<sup>2</sup>):<sup><img src="../static/images/InfoIcon.png" class="info-icon" alt="Information"></sup> </label>
+          
+          <div class="explanation" style="display: none;">
+            <img src="../static/images/ParamExplainAf.jpg">
+          </div>
+        </div>
+      </div>
+      <input type="number" id="iptFilmArea" value="8.6e4"/>
+      
+      <div>
+        <div>
+          <label for="iptTEMSpecimenThickness">Insert the thickness of the TEM specimen <i>t</i> (nm):<sup><img src="../static/images/InfoIcon.png" class="info-icon" alt="Information"></sup> </label>
+          
+          <div class="explanation" style="display: none;">
+            <img src="../static/images/ParamExplain_t.jpg">
+          </div>
+        </div>
+      </div>
+      <input type="number" id="iptTEMSpecimenThickness" value="100" diasbled />
+    
+      <div>
+        <div>
+          <label for="iptImageHeight">Insert the height of the whole image <i>H</i><sub>image</sub> (nm):<sup><img src="../static/images/InfoIcon.png" class="info-icon" alt="Information"></sup> </label>
+          <div class="explanation" style="display: none;">
+            <img src="../static/images/ParamExplainHimage.jpg">
+          </div>
+        </div>
+      </div>
+      <input type="number" id="iptImageHeight" value="825" diasbled />
   </div>
     <div class="inputSlider">
       <label for="iptConfidence" style="justify-self: left;">Confidence</label>
@@ -80,7 +107,7 @@
         min="0"
         max="1"
         step="0.01"
-        value="0.5"
+        value="0.7"
       />
       <label for="sldOverlap">0</label>
       <input
@@ -88,12 +115,14 @@
         min="0"
         max="1"
         step="0.001"
-        value="0.5"
+        value="0.7"
         id="sldOverlap"
       />
       <label for="sldOverlap">1</label>
     </div>
-
+    <footer>
+      <p class="copyright">&copy; 2024 Giang T. Dang. All rights reserved. </p>
+    </footer>
     
 
     <script src="../static/js/serve.js"></script>

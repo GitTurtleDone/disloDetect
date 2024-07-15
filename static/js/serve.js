@@ -1,10 +1,19 @@
 const saveFolderPath = "../Public/SavedImages/";
 let uploadedFileName = "";
+const dftConf = 0.268; // default Confidence
+const dftIoU = 0.7; // default overlap IoU
+const dftSumBhi = 3.46; // default sum of Bhi
+const dftDisloDensity = 3.3e10; // default dislocation density
+const dftAf = 8.6e4; // default film area
+const dft_t = 100; // default TEM specimen thickness
+const dftHimage = 825; // default height of the entire image
 
 document
   .getElementById("btnUploadPhoto")
   .addEventListener("click", async function () {
     removeOldBB();
+    resetApp();
+
     var fileInput = document.getElementById("iptUploadPhoto");
     var previewImage = document.getElementById("photo");
     // Check if file is selected
@@ -32,7 +41,7 @@ document
   });
 
 const photoInput = document.getElementById("iptUploadPhoto");
-const textPhotoInput = document.getElementById("txtUploadPhoto");
+// const textPhotoInput = document.getElementById("txtUploadPhoto");
 
 photoInput.addEventListener("click", async function selectPhoto(e) {
   photoFile = e.target.files[0];
@@ -182,7 +191,7 @@ function savePhotoToServer(photoFile, chbTrainingPhotoChecked) {
 //       // drawing bounding boxes around the detected objects
 //     }
 //   }
-//   document.getElementById("txtSumBhi").value = parseFloat(SumBhi).toFixed(2);
+//   document.getElementById("optSumBhi").value = parseFloat(SumBhi).toFixed(2);
 //   updateDisloDensity();
 //   console.log(`Sum of bhi: `, parseFloat(SumBhi).toFixed(2));
 //   return "predicted";
@@ -285,7 +294,7 @@ function processBB(results) {
       // drawing bounding boxes around the detected objects
     }
   }
-  document.getElementById("txtSumBhi").value = parseFloat(SumBhi).toFixed(2);
+  document.getElementById("optSumBhi").value = parseFloat(SumBhi).toFixed(2);
   updateDisloDensity();
   console.log(`Sum of bhi: `, parseFloat(SumBhi).toFixed(2));
   return "predicted";
@@ -319,24 +328,66 @@ inputSliders.forEach((pair) => {
 });
 
 function updateDisloDensity() {
-  const disloDensity = document.getElementById("txtDisloDensity");
+  const disloDensity = document.getElementById("optDisloDensity");
   var density =
-    (document.getElementById("txtSumBhi").value *
-      document.getElementById("txtImageHeight").value *
+    (document.getElementById("optSumBhi").value *
+      document.getElementById("iptImageHeight").value *
       1e14) /
-    (document.getElementById("txtFilmArea").value *
-      document.getElementById("txtTEMSpecimenThickness").value);
+    (document.getElementById("iptFilmArea").value *
+      document.getElementById("iptTEMSpecimenThickness").value);
   disloDensity.value = density.toPrecision(2);
 }
+let isExplanationVisible = false;
+const infoIcons = document.querySelectorAll(".info-icon");
+const explanations = document.querySelectorAll(".explanation");
 
+infoIcons.forEach((infoIcon, index) => {
+  infoIcon.addEventListener("click", () => {
+    const rect = infoIcon.getBoundingClientRect();
+    explanations[index].style.top = `${rect.top}px`;
+    explanations[index].style.left = `${rect.left}px`;
+    explanations[index].style.display = "flex";
+    // console.log("Explanation shown");
+  });
+  explanations[index].addEventListener("click", () => {
+    explanations[index].style.display = "none";
+  });
+  explanations[index].addEventListener("mouseleave", () => {
+    explanations[index].style.display = "none";
+  });
+});
+
+// window.addEventListener("click", (event) => {
+//   if (!explanation.contains(event.target) && isExplanationVisible) {
+//     explanation.style.display = "none";
+//     isExplanationVisible = false;
+//     console.log("Explanation hidden");
+//   }
+// });
+
+function resetApp() {
+  document.getElementById("iptConfidence").value = dftConf;
+  document.getElementById("sldConfidence").value = dftConf;
+  document.getElementById("iptOverlap").value = dftIoU;
+  document.getElementById("sldOverlap").value = dftIoU;
+
+  document.getElementById("optSumBhi").value = dftSumBhi;
+  document.getElementById("optDisloDensity").value =
+    dftDisloDensity.toPrecision(2);
+  document.getElementById("iptFilmArea").value = dftAf.toPrecision(2);
+  document.getElementById("iptTEMSpecimenThickness").value = dft_t;
+  document.getElementById("iptImageHeight").value = dftHimage;
+}
 document
-  .getElementById("txtFilmArea")
+  .getElementById("iptFilmArea")
   .addEventListener("change", updateDisloDensity);
 document
-  .getElementById("txtTEMSpecimenThickness")
+  .getElementById("iptTEMSpecimenThickness")
   .addEventListener("change", updateDisloDensity);
 document
-  .getElementById("txtImageHeight")
+  .getElementById("iptImageHeight")
   .addEventListener("change", updateDisloDensity);
 
-window.onload = async function () {};
+window.onload = async function () {
+  resetApp();
+};
