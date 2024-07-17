@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "rP9QfNKzEA/FEPWW062bMh/OHCeP2cF7H6L3xss8JJQ=",
+  "Source": "dislodetect_be",
+  "BasePath": "_content/dislodetect_be",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

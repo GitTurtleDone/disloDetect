@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/dislodetect_be.props" />
+</Project>
