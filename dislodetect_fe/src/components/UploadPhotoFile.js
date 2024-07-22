@@ -7,11 +7,13 @@ function UploadPhotoFile() {
     setPhotoFile(e.target.files[0]);
   };
   const handleUpload = async () => {
+    console.log("Before sending photo file name: ", photoFile);
     const formData = new FormData();
     formData.append("file", photoFile);
+    formData.append("usePhotoAllowed", usePhotoAllowed);
     try {
       const response = await axios.post(
-        "https://localhost:7200/UploadPhotoFile",
+        "http://localhost:5226/UploadPhotoFile",
         formData
       );
       console.log("Data received: ", response.data);
@@ -29,7 +31,7 @@ function UploadPhotoFile() {
         type="file"
         accept="image/*"
         display="none"
-        onClick={handleFileChange}
+        onChange={handleFileChange}
       ></input>
       <button onClick={handleUpload}>Upload the chosen image</button>
       <input
