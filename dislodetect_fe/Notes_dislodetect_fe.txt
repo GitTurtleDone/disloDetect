@@ -1,0 +1,4 @@
+When copying files to the "public" folder, in the react app project, the whole app will refresh
+when display images in React, the files should be stored either in the "public" folder or in the "src" folder
+The work-around implementation is to use: URL.createObjectURL(e.target.files[0]), i.e., 
+creating an URL for the image file and use that URL as for src prop of the "img" element

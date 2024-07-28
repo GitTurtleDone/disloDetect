@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
-function UploadPhotoFile() {
+function UploadPhotoFile({ updatePhotoFileSource }) {
   const [photoFile, setPhotoFile] = useState(null);
+  const [photoFileURL, setPhotoFileURL] = useState();
   const [usePhotoAllowed, setUsePhotoAllowed] = useState(false);
   const handleFileChange = (e) => {
+    // const selectedPhoto = e.target.files[0];
+    // const selectedPhotoFileName = selectedPhoto.name;
     setPhotoFile(e.target.files[0]);
+    setPhotoFileURL(URL.createObjectURL(e.target.files[0]));
+    console.log("In Upload Photo File: ", photoFileURL);
   };
   const handleUpload = async () => {
     console.log("Before sending photo file name: ", photoFile);
@@ -17,6 +22,7 @@ function UploadPhotoFile() {
         formData
       );
       console.log("Data received: ", response.data);
+      updatePhotoFileSource(photoFileURL);
     } catch (error) {
       console.log("Error: ", error);
     }
