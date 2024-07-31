@@ -38,7 +38,17 @@ public class UploadPhotoFileController : ControllerBase
         // Console.WriteLine("Went in here");
         try
         {
-            
+            foreach (string fileName in Directory.GetFiles(publicFolderPath))
+            {
+                try
+                {
+                    System.IO.File.Delete(fileName);
+                }
+                catch (IOException e)
+                {
+                    Console.WriteLine($"Error deleting file {fileName}: {e.Message}");
+                }
+            }
             var formCollection = await Request.ReadFormAsync();
             
             var file = formCollection.Files[0];
