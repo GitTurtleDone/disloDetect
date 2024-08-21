@@ -1,8 +1,13 @@
-import React, { useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import React from "react";
+import axios from "axios";
+import "../App.css";
+import { useRemoveOldBB } from "../hooks/useRemoveOldBB.js";
+
 function Predict(props) {
-  const { photo, updateSumBhi } = props;
+  const { imgContainerRef, photo, updateSumBhi} = props;
+  const triggerRemoveOldBB = useRemoveOldBB();
   const predictBB = async () => {
+    triggerRemoveOldBB();
     const formData = new FormData();
     formData.append("file", photo);
     try {
@@ -14,7 +19,7 @@ function Predict(props) {
       console.log("Data received: ", results);
       let formattedResults = formatResults(results);
       console.log(`Formatted results: \n`, formattedResults);
-      processBB(formattedResults);
+      processBB(formattedResults, imgContainerRef);
     } catch (error) {
       console.log("Error why predicting: ", error);
     }
@@ -36,26 +41,24 @@ function Predict(props) {
     });
     return [results["image"]["width"], results["image"]["height"], bboxes];
   }
-  function removeOldBB() {
-    const oldBBoxes = document.getElementsByClassName("bounding-box");
-    while (oldBBoxes.length > 0) {
-      oldBBoxes[0].parentNode.removeChild(oldBBoxes[0]);
-    }
-  }
+
   const bbColors = ["red"];
-  function processBB(formattedResults) {
+  function processBB(formattedResults, imgContainerRef) {
     // remove all the bounding boxes in the previous frames
+
     let bboxes = formattedResults[2];
     let SumBhi = 0;
     console.log(`bboxes: `, bboxes);
-    removeOldBB();
+
     let bbColor = "DarkRed"; // assign a dummy bounding box border colors
+    const imgContainer = imgContainerRef.current;
+
     if (bboxes.length > 0) {
       for (let i = 0; i < bboxes.length; i++) {
         // drawing bounding boxes around the detected objects
         const htmlBoundingBox = document.createElement("div");
         htmlBoundingBox.className = "bounding-box";
-        document.getElementById("image-container").appendChild(htmlBoundingBox);
+        imgContainer.appendChild(htmlBoundingBox);
         // console.log("bbColor Index", bboxes[0][i]);
         htmlBoundingBox.style.left = `${bboxes[i][0] - bboxes[i][2] / 2}%`;
         htmlBoundingBox.style.top = `${bboxes[i][1] - bboxes[i][3] / 2}%`;

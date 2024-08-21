@@ -20,9 +20,6 @@ public class PredictController : ControllerBase
             byte[] image = System.IO.File.ReadAllBytes(fileName);
             string encoded = Convert.ToBase64String(image);
             byte[] data = System.Text.Encoding.ASCII.GetBytes(encoded);
-            string API_KEY = "gf6lCijDiZMJtLqvxQhB";
-            string DATASET_NAME = "dislodetect";
-            string DATASET_VERSION = "4";
             
             //Contruct the URL
             string uploadURL =
