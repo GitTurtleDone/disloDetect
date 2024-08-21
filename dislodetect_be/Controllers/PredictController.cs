@@ -20,6 +20,11 @@ public class PredictController : ControllerBase
             byte[] image = System.IO.File.ReadAllBytes(fileName);
             string encoded = Convert.ToBase64String(image);
             byte[] data = System.Text.Encoding.ASCII.GetBytes(encoded);
+            string[] lines = System.IO.File.ReadAllLines("../Roboflow.txt");
+            string API_KEY = lines[0];//"gf6lCijDiZMJtLqvxQhB";
+            string DATASET_NAME = lines[1];// "dislodetect"
+            string DATASET_VERSION = lines[2]; // "4"
+            
             
             //Contruct the URL
             string uploadURL =
