@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import {useRemoveOldBB} from "../hooks/useRemoveOldBB.js";
+import { useRemoveOldBB } from "../hooks/useRemoveOldBB.js";
 function UploadPhotoFile({ updatePhotoFileSource }) {
   const triggerRemoveOldBB = useRemoveOldBB();
   // const { updatePhotoFileSource} = props;

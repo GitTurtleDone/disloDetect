@@ -9,18 +9,11 @@ export function useRemoveOldBB() {
       const oldBBoxes = document.getElementsByClassName("bounding-box");
       while (oldBBoxes.length > 0) {
         oldBBoxes[0].parentNode.removeChild(oldBBoxes[0]);
-      };
+      }
       setShouldRemoveOldBB(false);
-
     }
   }, [shouldRemoveOldBB]);
-
-  
 
   console.log(`went in removeOldBB`);
   return triggerRemoveOldBB;
 }
-
-
-
-

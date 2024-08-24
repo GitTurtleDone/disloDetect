@@ -4,7 +4,7 @@ import "../App.css";
 import { useRemoveOldBB } from "../hooks/useRemoveOldBB.js";
 
 function Predict(props) {
-  const { imgContainerRef, photo, updateSumBhi} = props;
+  const { imgContainerRef, photo, updateSumBhi } = props;
   const triggerRemoveOldBB = useRemoveOldBB();
   const predictBB = async () => {
     triggerRemoveOldBB();
