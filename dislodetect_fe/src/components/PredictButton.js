@@ -74,7 +74,7 @@ function Predict(props) {
   }
 
   return (
-    <div>
+    <div style={{marginBottom: "30px"}}>
       <button onClick={predictBB}>Predict (roboflow)</button>
     </div>
   );

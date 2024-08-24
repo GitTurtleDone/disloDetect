@@ -36,7 +36,7 @@ function UploadPhotoFile({ updatePhotoFileSource }) {
     setUsePhotoAllowed(!usePhotoAllowed);
   };
   return (
-    <div>
+    <div style={{marginBottom: "30px"}}>
       <input
         text="Choose a WBDF TEM image"
         type="file"
