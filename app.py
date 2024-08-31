@@ -87,7 +87,7 @@ def save_photo():
     
 
 
-model = YOLO('./runs/GCL/train36/weights/best.pt')
+model = YOLO('./runs/GCL/train31/weights/best.pt')
 #-------------do NOT delete these codes -----------------
 @app.route('/predict', methods=['GET','POST'])
 def predictImage():
