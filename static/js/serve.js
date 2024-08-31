@@ -1,6 +1,6 @@
 const saveFolderPath = "../Public/SavedImages/";
 let uploadedFileName = "";
-const dftConf = 0.268; // default Confidence
+const dftConf = 0.254; // default Confidence
 const dftIoU = 0.7; // default overlap IoU
 const dftSumBhi = 3.46; // default sum of Bhi
 const dftDisloDensity = 3.3e10; // default dislocation density
