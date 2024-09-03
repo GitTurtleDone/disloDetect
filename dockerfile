@@ -20,8 +20,22 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY . /app
 # RUN inference server start
 
-ENTRYPOINT ["python3"]
-CMD ["app.py"]
+# Start and enable SSH
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends dialog \
+    && apt-get install -y --no-install-recommends openssh-server \
+    && echo "root:Docker!" | chpasswd \
+    && chmod u+x ./entrypoint.sh
+COPY sshd_config /etc/ssh/
+
+EXPOSE 5000 2222
+
+# Start and enable SSH
+
+ENTRYPOINT ["./entrypoint.sh"]
+
+# ENTRYPOINT ["python3"]
+# CMD ["app.py"]
 
 # FROM builder as dev-envs
 
