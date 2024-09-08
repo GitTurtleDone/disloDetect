@@ -33,7 +33,7 @@ public class UploadPhotoFileController : ControllerBase
     public async Task<IActionResult> Upload()
     {
         string publicFolderPath = @"../Public/SavedImages";
-        string publicTrainingFolderPath = @"../Public/ForTrainingImages";
+        string publicTrainingFolderPath = @"../Public/ForTrainingImages/Store";
         // FolderNode folderTree;
         // Console.WriteLine("Went in here");
         try
