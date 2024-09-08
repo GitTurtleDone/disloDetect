@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dislodetect_be")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5b5dc210d06852ae2b27fda1334f9c5de0c63a7d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+613502c407b8423ff8348ee5cf9f2bb81b214c08")]
 [assembly: System.Reflection.AssemblyProductAttribute("dislodetect_be")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dislodetect_be")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
