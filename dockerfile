@@ -18,6 +18,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # Install libgl1-mesa-glx
 # RUN apt-get install libgl1-mesa-glx
 COPY . /app
+
 # RUN inference server start
 
 # Start and enable SSH

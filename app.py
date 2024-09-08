@@ -68,7 +68,7 @@ def save_photo():
     if chbTrainingPhoto=="true":
         print('Went in if python: ', chbTrainingPhoto)
         trainingFilePath = filePath
-        trainingFilePath = trainingFilePath.replace("SavedImages/", "ForTrainingImages/"+ str(imageCounter) + "_" + datetime.now().strftime("%Y%m%d%H%M%S") + "_")
+        trainingFilePath = trainingFilePath.replace("SavedImages/", "ForTrainingImages/Store/"+ str(imageCounter) + "_" + datetime.now().strftime("%Y%m%d%H%M%S") + "_")
         print(trainingFilePath)        
         shutil.copy2(filePath,trainingFilePath)
         imageCounter += 1
