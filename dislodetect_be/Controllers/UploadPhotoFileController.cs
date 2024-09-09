@@ -34,8 +34,7 @@ public class UploadPhotoFileController : ControllerBase
     {
         string publicFolderPath = @"../Public/SavedImages";
         string publicTrainingFolderPath = @"../Public/ForTrainingImages/Store";
-        // FolderNode folderTree;
-        // Console.WriteLine("Went in here");
+        int imageCounter = Directory.GetFiles(publicTrainingFolderPath).Length;
         try
         {
             foreach (string fileName in Directory.GetFiles(publicFolderPath))
@@ -75,12 +74,15 @@ public class UploadPhotoFileController : ControllerBase
                 Console.WriteLine("Use Photo Allowed: " + usePhotoAllowed);
                 if (usePhotoAllowed == "true")
                 {
-                    var fileTrainingPath = Path.Combine( publicTrainingFolderPath, fileName);
+                    string saveFileName = imageCounter.ToString() + "_" + DateTime.Now.ToString("yyyyMMddHHmmss")+ "_" + fileName;
+                    var fileTrainingPath = Path.Combine( publicTrainingFolderPath, saveFileName);
                     using (var stream = new FileStream(fileTrainingPath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
                     }
+                    // string formattedCurrentTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                     Console.WriteLine($"Copied training photo file path: {fileTrainingPath}");
+                    // Console.WriteLine($"at: {formattedCurrentTime}");
                     return Ok("Photo uploaded and will be used for training");
                 }
                 else
