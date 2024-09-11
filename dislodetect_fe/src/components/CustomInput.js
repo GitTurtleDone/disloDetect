@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import InfoImage from "./InfoImage";
+import {useUpdateDisloDensity} from "../hooks/useUpdateDisloDensity";
 
 function CustomInput(props) {
   const {
@@ -21,6 +22,8 @@ function CustomInput(props) {
   const handleHoverOrClick = () => {
     setShowExplanationImage(!showExplanationImage);
   };
+
+  const triggerUpdateDisloDensity = useUpdateDisloDensity();
   // useEffect(() => {
   //   const timeoutId = setTimeout(() => {
   //     setShowExplanationImage(false);
@@ -77,6 +80,7 @@ function CustomInput(props) {
         defaultValue={defaultValue}
         disabled={!(allowChange === "true")}
         style={{ marginLeft: "10px" }}
+        onChange={triggerUpdateDisloDensity}
       ></input>
 
       {/* <label for="optSumBhi">Calculated sum of all relative bounding box heights &#8721<i>b</i><sub>hi</sub>:</label>

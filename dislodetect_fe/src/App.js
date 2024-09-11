@@ -125,6 +125,9 @@ function App() {
         )
         
       })}
+      <footer>
+        <p class="copyright">&copy; 2024 Giang T. Dang. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
