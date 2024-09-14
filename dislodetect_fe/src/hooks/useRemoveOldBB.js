@@ -14,6 +14,6 @@ export function useRemoveOldBB() {
     }
   }, [shouldRemoveOldBB]);
 
-  console.log(`went in removeOldBB`);
+  // console.log(`went in removeOldBB`);
   return triggerRemoveOldBB;
 }

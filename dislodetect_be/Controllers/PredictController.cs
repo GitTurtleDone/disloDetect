@@ -24,6 +24,12 @@ public class PredictController : ControllerBase
             string API_KEY = lines[0];
             string DATASET_NAME = lines[1];
             string DATASET_VERSION = lines[2];
+            var formCollection = await Request.ReadFormAsync();
+            string confidence = formCollection["confidence"];
+            string overlap = formCollection["overlap"];
+            
+            Console.WriteLine($"confidence: {confidence}");
+            Console.WriteLine($"overlap: {overlap}");
             
             
             //Contruct the URL
@@ -31,8 +37,12 @@ public class PredictController : ControllerBase
                     "https://detect.roboflow.com/" +
                     DATASET_NAME + "/" + DATASET_VERSION +
                     "?api_key=" + API_KEY +
+                    "&confidence=" + confidence[..Math.Min(4, confidence.Length)] +
+                    "&overlap=" + overlap[..Math.Min(4, overlap.Length)] +
                     "&name=" + fileName;
             // Service Request Config
+
+            Console.WriteLine($"predictURL: {uploadURL}");
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             
@@ -63,8 +73,8 @@ public class PredictController : ControllerBase
             }
 
 
-            Console.WriteLine($"Image in the public folder: {fileName}");
-            Console.WriteLine($"Response Content: {responseContent}");
+            // Console.WriteLine($"Image in the public folder: {fileName}");
+            // Console.WriteLine($"Response Content: {responseContent}");
             return Ok(responseContent);
         } 
         catch (Exception ex)

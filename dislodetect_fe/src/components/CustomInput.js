@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import InfoImage from "./InfoImage";
-import {useUpdateDisloDensity} from "../hooks/useUpdateDisloDensity";
+import { useUpdateDisloDensity } from "../hooks/useUpdateDisloDensity";
 
 function CustomInput(props) {
   const {
     labelText,
     inputID,
-    inputAccuracy,
+    inputIncrement,
     defaultValue,
     hasInfoIcon,
     explanationImageSource,
@@ -34,6 +34,10 @@ function CustomInput(props) {
   return (
     <div
       style={{
+        display: "grid",
+        gridTemplateColumns: "500px 10px",
+        justifyItems: "start",
+        justifyContent: "center",
         marginBottom: "30px",
       }}
     >
@@ -80,6 +84,7 @@ function CustomInput(props) {
         defaultValue={defaultValue}
         disabled={!(allowChange === "true")}
         style={{ marginLeft: "10px" }}
+        step={inputIncrement}
         onChange={triggerUpdateDisloDensity}
       ></input>
 

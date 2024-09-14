@@ -1,0 +1,75 @@
+[
+  {
+    "customOutputInfos": {
+      "sumBhi": {
+        "labelText": "Calculated sum of all relative bounding box heights \\(\\sum b_{hi}\\): ",
+        "inputID": "optSumBhi",
+        "inputIncrement": "1e-1",
+        "defaultValue": "3.46",
+        "hasInfoIcon": "false",
+        "explanationImageSource": "",
+        "allowChange": "false"
+      },
+
+      "DisloDensity": {
+        "labelText": "Calculated dislocation density \\(\\rho = \\sum b_{hi}H_{image}/(A_f t)\\) \\((cm^{-2})\\): ",
+        "inputID": "optDisloDensity",
+        "inputIncrement": "1e9",
+        "defaultValue": "3.3e+10",
+        "hasInfoIcon": "false",
+        "explanationImageSource": "",
+        "allowChange": "false"
+      },
+
+      "Af": {
+        "labelText": "Insert the film area  ",
+        "inputID": "iptFilmArea",
+        "inputIncrement": "1e4",
+        "defaultValue": "8.6e4",
+        "hasInfoIcon": "true",
+        "explanationImageSource": "ParamExplainAf.jpg",
+        "allowChange": "true"
+      },
+
+      "t": {
+        "labelText": "Insert the thickness of the TEM specimen \\(t\\) \\((nm)\\): ",
+        "inputID": "iptTEMSpecimenThickness",
+        "inputIncrement": "10",
+        "defaultValue": "100",
+        "hasInfoIcon": "true",
+        "explanationImageSource": "ParamExplain_t.jpg",
+        "allowChange": "true"
+      },
+
+      "Himage": {
+        "labelText": "Insert the height of the whole image \\(H_{image}\\) \\((nm)\\): ",
+        "inputID": "iptImageHeight",
+        "inputIncrement": "10",
+        "defaultValue": "85",
+        "hasInfoIcon": "true",
+        "explanationImageSource": "ParamExplainHimage.jpg",
+        "allowChange": "true"
+      }
+    }
+  },
+  {
+    "inputSliderInfos": {
+      "iptSldConfidence": {
+        "iptText": "Confidence",
+        "iptId": "iptConfidence",
+        "sldId": "sldConfidence",
+        "iptStep": "0.01",
+        "sldStep": "0.001",
+        "dftValue": "0.254"
+      },
+      "iptSldOverlap": {
+        "iptText": "Overlap",
+        "iptId": "iptOverlap",
+        "sldId": "sldOverlap",
+        "iptStep": "0.01",
+        "sldStep": "0.001",
+        "dftValue": "0.7"
+      }
+    }
+  }
+]

@@ -7,17 +7,74 @@ import Predict from "./components/PredictButton";
 import { useRemoveOldBB } from "./hooks/useRemoveOldBB";
 import CustomInput from "./components/CustomInput";
 import InputSlider from "./components/InputSlider";
-import {useUpdateDisloDensity} from "./hooks/useUpdateDisloDensity";
+import { useUpdateDisloDensity } from "./hooks/useUpdateDisloDensity";
+import { usePredict } from "./hooks/usePredict";
+import Infos from "./components/Infos.json";
 
 function App() {
   const [photoFileSource, setPhotoFileSource] = useState();
   const [photoFile, setPhotoFile] = useState();
   const [sumBhi, setSumBhi] = useState(3.46);
   const imgContainerRef = useRef(null); // reference to the photo element
+  const [confidence, setConfidence] = useState(0.254);
+  const [overlap, setOverlap] = useState(0.7);
+  // const [customOutputInfos, setCustomOutputInfos] = useState(null);
+  // const [inputSliderInfos, setInputSliderInfos] = useState(null);
   // const lblSumBhi =
   //   "Calculated sum of all relative bounding box heights \\(\\sum b_{hi}\\): ";
   // const lblAf = "Insert the film area \\(A_f\\) \\((nm^2)\\): ";
 
+  // const customOutputInfos = Infos[0];
+  // const inputSliderInfos = Infos[1];
+  // useEffect(()=>{
+  //   const fetchData = async () =>{
+  //     try {
+  //       const response = await fetch('./components/Infos.json');
+  //       const data = await response.json();
+  //       const jsonData = JSON.stringify(data);
+  //       setCustomOutputInfos(jsonData["customOutputInfos"]);
+  //       setInputSliderInfos(jsonData["inputSliderInfos"]);
+  //       console.log("customOutpuInfos: ", customOutputInfos);
+  //       console.log("inputSliderInfo: ", inputSliderInfos);
+  //     } catch (error) {
+  //       console.log(error.messag);
+  //     }
+  //   };
+  //   fetchData();
+  // },[]);
+
+  const updatePhotoFileSource = (source) => {
+    setPhotoFileSource(source);
+  };
+
+  const updateSumBhi = (data) => {
+    setSumBhi(data);
+    document.getElementById(customOutputInfos["sumBhi"]["inputID"]).value =
+      data.toFixed(1);
+    triggerUpdateDisloDensity();
+  };
+
+  const updatePhotoFile = (photoFile) => {
+    setPhotoFile(photoFile);
+  };
+
+  const updateConfidence = (data) => {
+    setConfidence(data);
+    triggerPredict();
+    console.log("confidence updated");
+  };
+  const updateOverlap = (data) => {
+    setOverlap(data);
+    triggerPredict();
+    console.log("overlap updated");
+  };
+  const { predicting, triggerPredict } = usePredict({
+    imgContainerRef,
+    photoFile,
+    confidence,
+    overlap,
+    updateSumBhi,
+  });
   const triggerUpdateDisloDensity = useUpdateDisloDensity();
 
   const customOutputInfos = {
@@ -25,7 +82,7 @@ function App() {
       labelText:
         "Calculated sum of all relative bounding box heights \\(\\sum b_{hi}\\): ",
       inputID: "optSumBhi",
-      inputAccuracy: "1e-2",
+      inputIncrement: "1e-1",
       defaultValue: "3.46",
       hasInfoIcon: "false",
       explanationImageSource: "",
@@ -36,7 +93,7 @@ function App() {
       labelText:
         "Calculated dislocation density \\(\\rho = \\sum b_{hi}H_{image}/(A_f t)\\) \\((cm^{-2})\\): ",
       inputID: "optDisloDensity",
-      inputAccuracy: "1e-2",
+      inputIncrement: "1e9",
       defaultValue: "3.3e+10",
       hasInfoIcon: "false",
       explanationImageSource: "",
@@ -46,7 +103,7 @@ function App() {
     Af: {
       labelText: "Insert the film area \\(A_f\\) \\((nm^2)\\): ",
       inputID: "iptFilmArea",
-      inputAccuracy: "1e-2",
+      inputIncrement: "1e4",
       defaultValue: "8.6e4",
       hasInfoIcon: "true",
       explanationImageSource: "ParamExplainAf.jpg",
@@ -57,7 +114,7 @@ function App() {
       labelText:
         "Insert the thickness of the TEM specimen \\(t\\) \\((nm)\\): ",
       inputID: "iptTEMSpecimenThickness",
-      inputAccuracy: "1e-2",
+      inputIncrement: "10",
       defaultValue: "100",
       hasInfoIcon: "true",
       explanationImageSource: "ParamExplain_t.jpg",
@@ -68,7 +125,7 @@ function App() {
       labelText:
         "Insert the height of the whole image \\(H_{image}\\) \\((nm)\\): ",
       inputID: "iptImageHeight",
-      inputAccuracy: "1e-2",
+      inputIncrement: "10",
       defaultValue: "85",
       hasInfoIcon: "true",
       explanationImageSource: "ParamExplainHimage.jpg",
@@ -93,27 +150,16 @@ function App() {
       dftValue: "0.7",
     },
   };
-  const updatePhotoFileSource = (source) => {
-    setPhotoFileSource(source);
-  };
 
-  const updateSumBhi = (data) => {
-    setSumBhi(data);
-    document.getElementById(customOutputInfos["sumBhi"]["inputID"]).value = data.toFixed(1);
-    triggerUpdateDisloDensity();
-  };
-
-  const updatePhotoFile = (photoFile) => {
-    setPhotoFile(photoFile);
-  };
   // const imagePath = "../../Public/SavedImages/Ref03_Fig4b_Rot45.jpg";
+  console.log(customOutputInfos);
   useEffect(() => {
     if (typeof window?.MathJax !== "undefined") {
       window.MathJax.typeset();
     }
   }, []);
-  const mathEq =
-    "Calculated sum of all relative bounding box heights \\(\\sum\\)";
+  // const mathEq =
+  //   "Calculated sum of all relative bounding box heights \\(\\sum\\)";
   const value = customOutputInfos["Af"];
   return (
     <div className="center-container">
@@ -121,16 +167,39 @@ function App() {
       <div id="image-container" ref={imgContainerRef}>
         <img src={photoFileSource} alt="" />
       </div>
+      <p>Select only weak beam dark field TEM images</p>
       <UploadPhotoFile
         updatePhotoFileSource={updatePhotoFileSource}
         // triggerRemoveOldBB={triggerRemoveOldBB}
       />
-      <Predict
+      {/* <Predict
         imgContainerRef={imgContainerRef}
         photo={photoFile}
+        confidence={confidence}
+        overlap={overlap}
         updateSumBhi={updateSumBhi}
         // triggerRemoveOldBB={triggerRemoveOldBB}
-      />
+      /> */}
+      <button
+        onClick={triggerPredict}
+        style={{
+          backgroundColor: "#0055bb",
+          width: "150px",
+          height: "30px",
+          marginBottom: "30px",
+          color: "#ffffff",
+          border: "none",
+        }}
+      >
+        Predict (roboflow)
+      </button>
+      {predicting && (
+        <div className="overlay">
+          <div className="overlay-content">
+            <p>Predicting ....</p>
+          </div>
+        </div>
+      )}
 
       {Object.keys(customOutputInfos).map((key) => {
         const value = customOutputInfos[key];
@@ -139,7 +208,7 @@ function App() {
             key={key}
             labelText={value["labelText"]}
             inputID={value["inputID"]}
-            inputAccuracy={value["inputAccuracy"]}
+            inputIncrement={value["inputIncrement"]}
             defaultValue={value["defaultValue"]}
             hasInfoIcon={value["hasInfoIcon"]}
             explanationImageSource={value["explanationImageSource"]}
@@ -149,15 +218,21 @@ function App() {
       })}
       {Object.keys(inputSliderInfos).map((key) => {
         const value = inputSliderInfos[key];
+
         return (
           <InputSlider
             key={key}
-            iptText= {value["iptText"]}
+            iptText={value["iptText"]}
             iptId={value["iptId"]}
             sldId={value["sldId"]}
             iptStep={value["iptStep"]}
             sldStep={value["sldStep"]}
             dftValue={value["dftValue"]}
+            updateValue={
+              value["iptText"] == "Confidence"
+                ? updateConfidence
+                : updateOverlap
+            }
           />
         );
       })}
