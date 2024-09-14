@@ -6,15 +6,19 @@ import UploadPhotoFile from "./components/UploadPhotoFile";
 import Predict from "./components/PredictButton";
 import { useRemoveOldBB } from "./hooks/useRemoveOldBB";
 import CustomInput from "./components/CustomInput";
+import InputSlider from "./components/InputSlider";
+import {useUpdateDisloDensity} from "./hooks/useUpdateDisloDensity";
 
 function App() {
   const [photoFileSource, setPhotoFileSource] = useState();
   const [photoFile, setPhotoFile] = useState();
   const [sumBhi, setSumBhi] = useState(3.46);
   const imgContainerRef = useRef(null); // reference to the photo element
-  const lblSumBhi =
-    "Calculated sum of all relative bounding box heights \\(\\sum b_{hi}\\): ";
-  const lblAf = "Insert the film area \\(A_f\\) \\((nm^2)\\): ";
+  // const lblSumBhi =
+  //   "Calculated sum of all relative bounding box heights \\(\\sum b_{hi}\\): ";
+  // const lblAf = "Insert the film area \\(A_f\\) \\((nm^2)\\): ";
+
+  const triggerUpdateDisloDensity = useUpdateDisloDensity();
 
   const customOutputInfos = {
     sumBhi: {
@@ -71,13 +75,32 @@ function App() {
       allowChange: "true",
     },
   };
-
+  const inputSliderInfos = {
+    iptSldConfidence: {
+      iptText: "Confidence",
+      iptId: "iptConfidence",
+      sldId: "sldConfidence",
+      iptStep: "0.01",
+      sldStep: "0.001",
+      dftValue: "0.254",
+    },
+    iptSldOverlap: {
+      iptText: "Overlap",
+      iptId: "iptOverlap",
+      sldId: "sldOverlap",
+      iptStep: "0.01",
+      sldStep: "0.001",
+      dftValue: "0.7",
+    },
+  };
   const updatePhotoFileSource = (source) => {
     setPhotoFileSource(source);
   };
 
   const updateSumBhi = (data) => {
     setSumBhi(data);
+    document.getElementById(customOutputInfos["sumBhi"]["inputID"]).value = data.toFixed(1);
+    triggerUpdateDisloDensity();
   };
 
   const updatePhotoFile = (photoFile) => {
@@ -93,7 +116,7 @@ function App() {
     "Calculated sum of all relative bounding box heights \\(\\sum\\)";
   const value = customOutputInfos["Af"];
   return (
-    <div>
+    <div className="center-container">
       <h1>Dislocation Detection</h1>
       <div id="image-container" ref={imgContainerRef}>
         <img src={photoFileSource} alt="" />
@@ -108,22 +131,35 @@ function App() {
         updateSumBhi={updateSumBhi}
         // triggerRemoveOldBB={triggerRemoveOldBB}
       />
-      
+
       {Object.keys(customOutputInfos).map((key) => {
         const value = customOutputInfos[key];
         return (
           <CustomInput
-          key={key}
-          labelText={value["labelText"]}
-          inputID={value["inputID"]}
-          inputAccuracy={value["inputAccuracy"]}
-          defaultValue={value["defaultValue"]}
-          hasInfoIcon={value["hasInfoIcon"]}
-          explanationImageSource={value["explanationImageSource"]}
-          allowChange={value["allowChange"]}
-        />
-        )
-        
+            key={key}
+            labelText={value["labelText"]}
+            inputID={value["inputID"]}
+            inputAccuracy={value["inputAccuracy"]}
+            defaultValue={value["defaultValue"]}
+            hasInfoIcon={value["hasInfoIcon"]}
+            explanationImageSource={value["explanationImageSource"]}
+            allowChange={value["allowChange"]}
+          />
+        );
+      })}
+      {Object.keys(inputSliderInfos).map((key) => {
+        const value = inputSliderInfos[key];
+        return (
+          <InputSlider
+            key={key}
+            iptText= {value["iptText"]}
+            iptId={value["iptId"]}
+            sldId={value["sldId"]}
+            iptStep={value["iptStep"]}
+            sldStep={value["sldStep"]}
+            dftValue={value["dftValue"]}
+          />
+        );
       })}
       <footer>
         <p class="copyright">&copy; 2024 Giang T. Dang. All rights reserved.</p>
