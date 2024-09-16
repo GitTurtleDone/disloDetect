@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 function InputSlider(props) {
-  const { iptText, iptId, sldId, iptStep, sldStep, dftValue, updateValue } = props;
-  const [value, setValue] = useState(parseFloat(dftValue));
-  // const [finalValue, setFinalValue] = useState(parseFloat(dftValue));
+  const { iptText, iptId, sldId, iptStep, sldStep, dftVal, updateVal } = props;
+  const [value, setValue] = useState(parseFloat(dftVal));
+  // const [finalValue, setFinalValue] = useState(parseFloat(dftVal));
   const updateSlider = (e) => {
     setValue(e.target.value);
-    // updateValue(e.target.value);
+    // updateVal(e.target.value);
   };
   const updateInput = (e) => {
     const iptVal = e.target.value;
     if (!isNaN(iptVal) && iptVal >= 0 && iptVal <= 1) {
       setValue(Number(iptVal));
     }
-    // updateValue(iptVal);
+    // updateVal(iptVal);
   };
 
   //  below use effect is for updating the slider and input in 500 ms intervals 
@@ -20,7 +20,7 @@ function InputSlider(props) {
   useEffect(()=>{
     const hdlTimeout = setTimeout(() =>{
       // setFinalValue(value);
-      updateValue(value);
+      updateVal(value);
     }, 500);
     return () => {
       clearTimeout(hdlTimeout);
@@ -55,6 +55,7 @@ function InputSlider(props) {
       </label>
       <input
         type="range"
+        id={sldId}
         min="0"
         max="1"
         step={sldStep}

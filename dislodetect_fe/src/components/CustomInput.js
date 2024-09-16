@@ -5,10 +5,10 @@ import { useUpdateDisloDensity } from "../hooks/useUpdateDisloDensity";
 
 function CustomInput(props) {
   const {
-    labelText,
-    inputID,
-    inputIncrement,
-    defaultValue,
+    lblText,
+    iptId,
+    iptIncrement,
+    dftVal,
     hasInfoIcon,
     explanationImageSource,
     allowChange,
@@ -41,8 +41,8 @@ function CustomInput(props) {
         marginBottom: "30px",
       }}
     >
-      <label for={inputID}>
-        {labelText}
+      <label for={iptId}>
+        {lblText}
 
         {hasInfoIcon == "true" && explanationImageSource != "" && (
           // (
@@ -80,11 +80,11 @@ function CustomInput(props) {
       </label>
       <input
         type="number"
-        id={inputID}
-        defaultValue={defaultValue}
+        id={iptId}
+        defaultValue={dftVal}
         disabled={!(allowChange === "true")}
         style={{ marginLeft: "10px" }}
-        step={inputIncrement}
+        step={iptIncrement}
         onChange={triggerUpdateDisloDensity}
       ></input>
 
@@ -92,7 +92,7 @@ function CustomInput(props) {
       <input
         type="number"
         id = "optSumBhi"
-        defaultValue="3.46"
+        dftVal="3.46"
         disabled="true"
       ></input> */}
     </div>

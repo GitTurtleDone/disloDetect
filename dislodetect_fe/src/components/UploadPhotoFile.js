@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { useRemoveOldBB } from "../hooks/useRemoveOldBB.js";
+import { useResetInputs } from "../hooks/useResetInputs.js";
 function UploadPhotoFile({ updatePhotoFileSource }) {
   const triggerRemoveOldBB = useRemoveOldBB();
+  const triggerResetInputs = useResetInputs();
   // const { updatePhotoFileSource} = props;
   const [photoFile, setPhotoFile] = useState(null);
   const [photoFileURL, setPhotoFileURL] = useState();
@@ -16,6 +18,7 @@ function UploadPhotoFile({ updatePhotoFileSource }) {
   };
   const handleUpload = async () => {
     triggerRemoveOldBB();
+    triggerResetInputs();
     console.log("Before sending photo file name: ", photoFile);
     const formData = new FormData();
     formData.append("file", photoFile);

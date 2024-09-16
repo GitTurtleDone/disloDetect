@@ -28,8 +28,8 @@ public class PredictController : ControllerBase
             string confidence = formCollection["confidence"];
             string overlap = formCollection["overlap"];
             
-            Console.WriteLine($"confidence: {confidence}");
-            Console.WriteLine($"overlap: {overlap}");
+            Console.WriteLine($"confidence: {confidence[..Math.Min(4, confidence.Length)]}");
+            Console.WriteLine($"overlap: {overlap[..Math.Min(4, overlap.Length)]}");
             
             
             //Contruct the URL
