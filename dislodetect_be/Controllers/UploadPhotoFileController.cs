@@ -34,9 +34,23 @@ public class UploadPhotoFileController : ControllerBase
     {
         string publicFolderPath = @"../Public/SavedImages";
         string publicTrainingFolderPath = @"../Public/ForTrainingImages/Store";
+        
+        if (!Directory.Exists(publicFolderPath) )
+        {
+            Directory.CreateDirectory(publicFolderPath); 
+        };
+
+        if (!Directory.Exists(publicTrainingFolderPath) )
+        {
+            Directory.CreateDirectory(publicTrainingFolderPath);  
+        };
+
         int imageCounter = Directory.GetFiles(publicTrainingFolderPath).Length;
+        
         try
         {
+            
+            
             foreach (string fileName in Directory.GetFiles(publicFolderPath))
             {
                 try
@@ -51,16 +65,11 @@ public class UploadPhotoFileController : ControllerBase
             var formCollection = await Request.ReadFormAsync();
             
             var file = formCollection.Files[0];
-
-            // Console.WriteLine(f"file: {file}", );
-            
             
             if (file.Length > 0)
             {
-                // Console.WriteLine("Went in if");
-                var fileName = file.FileName;//.Trim('"')
                 
-                // var fileExtension = Path.GetExtension(fileName);
+                var fileName = file.FileName;
 
                 var filePath = Path.Combine( publicFolderPath, fileName);
                 Console.WriteLine("File Path: " + filePath);
@@ -74,6 +83,7 @@ public class UploadPhotoFileController : ControllerBase
                 Console.WriteLine("Use Photo Allowed: " + usePhotoAllowed);
                 if (usePhotoAllowed == "true")
                 {
+                    
                     string saveFileName = imageCounter.ToString() + "_" + DateTime.Now.ToString("yyyyMMddHHmmss")+ "_" + fileName;
                     var fileTrainingPath = Path.Combine( publicTrainingFolderPath, saveFileName);
                     using (var stream = new FileStream(fileTrainingPath, FileMode.Create))

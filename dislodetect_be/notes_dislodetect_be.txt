@@ -1,0 +1,3 @@
+install xunit
+dotnet add package xunit
+dotnet add package Moq
