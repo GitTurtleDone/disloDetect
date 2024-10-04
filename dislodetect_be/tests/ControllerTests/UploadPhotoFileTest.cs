@@ -1,12 +1,9 @@
 using Xunit;
 using dislodetect_be.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using Moq;
+ using Moq;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
+
 public class UploadPhotoFileControllerTests
 {
     private Mock<IFormFile> _mockPhotoFile;
@@ -56,7 +53,7 @@ public class UploadPhotoFileControllerTests
         };
     }
     
-
+    
     [Fact]
     public async Task ReturnOK_FileNotEmpty_UsePhotoAllowed()
     {
@@ -87,5 +84,6 @@ public class UploadPhotoFileControllerTests
         var badResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal("File is empty.", badResult.Value);
     }
+    
 
 }

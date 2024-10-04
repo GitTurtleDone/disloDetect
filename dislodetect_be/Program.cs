@@ -13,6 +13,8 @@
 // using System.Web;
 // using Microsoft.AspNetCore.Http; 
 // using Microsoft.AspNetCore.Http.HttpResults;
+using dislodetect_be.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,6 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.AddScoped<IPredictRequestHandler, PredictRequestHandler>();
 
 
 builder.Services.AddCors(options=>
