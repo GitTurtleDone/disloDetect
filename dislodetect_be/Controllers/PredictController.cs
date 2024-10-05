@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using System.Data.SqlTypes;
 namespace dislodetect_be.Controllers;
 [ApiController]
 [Route("[controller]")]
@@ -21,18 +22,26 @@ public class PredictController : ControllerBase
     [HttpPost (Name = "PostPredict")]
     public async Task<IActionResult> Predict()
     {
-        string? responseContent=null; //message = null
+        string? responseContent;
         try
         {   
             var formCollection = await Request.ReadFormAsync();
+            string? requestURL = _predictRequestHandler.BuildRequestString(formCollection).RequestURL;
+            var request = _predictRequestHandler.Create(requestURL);
+            Console.WriteLine($"requestURL: {requestURL}");
+            byte[]? data = _predictRequestHandler.GetImage().ImageData;
+            // string? _message = null;
+            var stream = _predictRequestHandler.GetRequestStream(request,data);
             
-            var (stream, request, _) = _predictRequestHandler.PostRequest(formCollection);
-            using (stream)
-            {
-                var response = _predictRequestHandler.GetResponse(request);
-                responseContent = response.ResponseContent;
-                //message = response.Message;
-            }
+            var response = _predictRequestHandler.GetResponse(request);
+            var responseStream = _predictRequestHandler.GetResponseStream(response);
+
+            using StreamReader sr = new(responseStream);
+            responseContent =  sr.ReadToEnd();
+            //responseContent = _predictRequestHandler.GetResponseContent(responseStream);
+            
+                
+            
             // string publicFolderPath = @"../Public/SavedImages";
             // string fileName = Directory.GetFiles(publicFolderPath)[0];
             // byte[] image = System.IO.File.ReadAllBytes(fileName);
@@ -113,10 +122,11 @@ public interface IPredictRequestHandler
     (string[]? Credentials, string Message) GetCredentials();
     void SetConfidenceAndOverlap(IFormCollection formCollection);
     (string? RequestURL, string Message) BuildRequestString(IFormCollection formCollection);
-    // (WebRequest? Request, string Message) CreateRequest();
-    // (Stream? Stream, string Message) GetRequestStream();
-    (Stream? PredictPostStream, WebRequest? PredictPostRequest, string? Message) PostRequest(IFormCollection formCollection);
-    (string? ResponseContent, string? Message) GetResponse(WebRequest request);
+    WebRequest? Create(string? requestURL);
+    Stream? GetRequestStream(WebRequest? request, byte[]? data);
+    WebResponse? GetResponse(WebRequest? request);
+    Stream? GetResponseStream(WebResponse response);
+    string? GetResponseContent(Stream? responseStream);
 }
 
 public class PredictRequestHandler: IPredictRequestHandler
@@ -195,25 +205,67 @@ public class PredictRequestHandler: IPredictRequestHandler
         return (requestURL, message);
 
     }
-
+    public WebRequest? Create(string? requestURL)
+    {
+        var request = WebRequest.Create(requestURL);
+        ServicePointManager.Expect100Continue = true;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        request.Method = "POST";
+        request.ContentType = "application/x-www-form-urlencoded";
+        return request;
+    }
+    public Stream? GetRequestStream(WebRequest? request, byte[]? data)
+    {    
+        request.ContentLength = data.Length;
+        Stream? stream = request.GetRequestStream();
+        using (stream)
+        {
+            stream.Write(data, 0, data.Length);    
+        }
+        return stream;
+    }
     
-    public (Stream? PredictPostStream, WebRequest? PredictPostRequest, string? Message) PostRequest(IFormCollection formCollection)
+    public WebResponse? GetResponse(WebRequest? request)
+    {
+        return request.GetResponse();
+    }
+
+    public Stream? GetResponseStream(WebResponse response)
+    {
+        return response.GetResponseStream();
+        
+    }
+
+    public string? GetResponseContent(Stream? responseStream)
+    {
+            Console.WriteLine("went in Get Response Content");       
+            using StreamReader sr1 = new(responseStream);
+            return sr1.ReadToEnd();
+        
+    }
+    
+}
+
+/*
+    public (Stream? PredictPostStream, WebRequest? PredictPostRequest, string? Message) PostRequest(WebRequest? request, byte[]? data)
     {
         Stream? stream = null;
-        WebRequest? request = null;
         string? message = "Error occured when posting a request: ";
         try
         {
-            byte[]? data = GetImage().ImageData;
-            string? uploadURL = BuildRequestString(formCollection).RequestURL;
-            request = WebRequest.Create(uploadURL);
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = data.Length;
-            stream = request.GetRequestStream();
-            stream.Write(data, 0, data.Length);
+            //byte[]? data = GetImage().ImageData;
+            // string? uploadURL = BuildRequestString(formCollection).RequestURL;
+            // request = WebRequest.Create(uploadURL);
+            
+            // request.Method = "POST";
+            // request.ContentType = "application/x-www-form-urlencoded";
+            // request.ContentLength = data.Length;
+            // stream = request.GetRequestStream();
+            // stream.Write(data, 0, data.Length);
+            //request = CreateRequest(formCollection).Request;
+            string? _message = null;
+            (stream, request, _message) = GetRequestStream(request, data);
+            Console.WriteLine($"stream: {stream}");
             message = "Request posted successfully";
         } catch (Exception ex)
         {
@@ -222,30 +274,26 @@ public class PredictRequestHandler: IPredictRequestHandler
         }
         return (stream, request, message);
     }
+    */
 
-    public (string? ResponseContent, string? Message) GetResponse(WebRequest request)
-    {   
-        string responseContent = null;
-        string message = "Error when trying IRequestHandler GetResponse: ";
-        try
-        {
-            using (WebResponse response = request.GetResponse())
-            {
-                using (Stream stream = response.GetResponseStream())
-                {
-                    using (StreamReader sr = new StreamReader(stream))
-                    {
-                        responseContent = sr.ReadToEnd();
-                    }
-                }
-            }
-            message = "Successfully get response";
+    // public (string? ResponseContent, string? Message) GetResponse(WebRequest request)
+    // {   
+    //     string responseContent = null;
+    //     string message = "Error when trying IRequestHandler GetResponse: ";
+    //     try
+    //     {
+    //         using (WebResponse response = request.GetResponse())
+    //         {
+    //             using Stream stream = response.GetResponseStream();
+    //             using StreamReader sr = new(stream);
+    //             responseContent = sr.ReadToEnd();
+    //         }
+    //         message = "Successfully get response";
             
-        } catch (Exception ex)
-        {
-            message = message + ex.Message;
-            Console.WriteLine(message);
-        }
-        return (responseContent, message);        
-    }
-}
+    //     } catch (Exception ex)
+    //     {
+    //         message += ex.Message;
+    //         Console.WriteLine(message);
+    //     }
+    //     return (responseContent, message);        
+    // }

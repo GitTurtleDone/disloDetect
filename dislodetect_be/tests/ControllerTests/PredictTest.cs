@@ -4,9 +4,6 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using dislodetect_be.Controllers;
 using System.Net;
-using Microsoft.VisualBasic;
-using Microsoft.AspNetCore.Http.Features;
-using System.Data.SqlTypes;
 using System.Text;
 public class PredictControllerTests
 {
@@ -25,6 +22,8 @@ public class PredictControllerTests
         _mockFormCollection = new Mock<IFormCollection>();
         _mockPredictRequestHandler = new Mock<IPredictRequestHandler>();
         _predictHandler = new PredictRequestHandler();
+        _mockHttpRequest = new Mock<HttpRequest>();
+        _mockHttpContext = new Mock<HttpContext>();
         _mockPredictController = new PredictController(_mockPredictRequestHandler.Object);
         _mockImage = Array.Empty<byte>();
     }
@@ -44,37 +43,6 @@ public class PredictControllerTests
         _mockFormCollection.Setup(c => c["confidence"]).Returns(confidence);
         _mockFormCollection.Setup(c => c["overlap"]).Returns(overlap); 
         _predictHandler.SetConfidenceAndOverlap(_mockFormCollection.Object);
-        
-        // set up tests for the IPredictRequestHandler interface
-        // _mockPredictRequestHandler.Setup(h => h.SavedImageFolderPath).Returns(savedImageFolderPath);
-        // _mockPredictRequestHandler.Setup(h => h.CredentialFilePath).Returns(credentialFilePath);
-        // _mockHttpRequest.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(_mockFormCollection.Object);
-        // _mockHttpContext.Setup(c => c.Request).Returns(_mockHttpRequest.Object);
-        // _mockPredictController.ControllerContext = new ControllerContext
-        // {
-        //     HttpContext = _mockHttpContext.Object
-        // };
-        // _mockPredictRequestHandler.Setup(h => h.GetImage().ImageData).Returns(_mockImage);
-        // string mockURL = "https://someURL.com";
-        // _mockPredictRequestHandler.Setup(h => h.BuildRequestString(_mockFormCollection.Object).RequestURL).Returns(mockURL);
-
-        // _mockFormFile.Setup(f => f.FileName).Returns("Ref03_Fig4b_Rot45.jpg");
-        // _mockFormFile.Setup(f => f.Length).Returns(_mockImage.Length);
-        // _mockFormFile.Setup(f => f.ContentType).Returns("image/jpeg");
-        // _mockFormFile.Setup(f => f.OpenReadStream()).Returns(stream);
-        
-        
-        // _mockHttpRequest.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(_mockFormCollection.Object);
-        // _mockHttpContext.Setup(c => c.Request).Returns(_mockHttpRequest.Object);
-        // _controller.ControllerContext = new ControllerContext
-        // {
-        //     HttpContext = _mockHttpContext.Object
-        // };
-
-        // _mockPredictRequestHandler.Setup(h => h.Confidence).Returns(confidence);
-        // _mockPredictRequestHandler.Setup(h => h.Overlap).Returns(overlap);
-
-
     }
     [Fact]
     public async Task ReturnCorerct_SavedImageFolderPath()
@@ -127,10 +95,43 @@ public class PredictControllerTests
         string strExpected = "https://detect.roboflow.com/myDataset/myVersion?api_key=myKey&confidence=0.2567&overlap=0.7&name=";
         Assert.True(result.RequestURL.Contains(strExpected));
     }
+    
     [Fact]
-    public async Task Test_Predict()
+    public async Task Test_CreateRequest()
     {
-
+        var request = _predictHandler.Create("https://mockURL.com");
+        Assert.IsType<HttpWebRequest>(request);
+        Assert.Equal("POST", request.Method);
+        Assert.Equal("application/x-www-form-urlencoded", request.ContentType);
     }
+    
+    [Fact]
+    public async Task Test_PredictController()
+    {
+        _mockFormCollection.Setup(c => c["confidence"]).Returns("0.3");
+        _mockFormCollection.Setup(c => c["overlap"]).Returns("0.9");
+        _mockHttpRequest.Setup(c => c.ReadFormAsync(default)).ReturnsAsync(_mockFormCollection.Object);
+        _mockHttpContext.Setup(c => c.Request).Returns(_mockHttpRequest.Object);
+        _mockPredictController.ControllerContext = new ControllerContext
+        {
+            HttpContext = _mockHttpContext.Object
+        };
+        _mockPredictRequestHandler.Setup(h => h.BuildRequestString(It.IsAny<IFormCollection>())).Returns(("https://mockURL.com","RequestURL built"));
+        _mockPredictRequestHandler.Setup(h => h.GetImage()).Returns((_mockImage,"Image obtained"));
+        var sendingStream = new MemoryStream(_mockImage);
+        _mockPredictRequestHandler.Setup(h => h.GetRequestStream(It.IsAny<WebRequest>(),It.IsAny<byte[]?>())).Returns(sendingStream);
+        var responseStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes("Predicted Results"));
+        _mockPredictRequestHandler.Setup(r => r.GetResponseStream(It.IsAny<WebResponse>())).Returns(responseStream);
+        var result =await _mockPredictController.Predict();
+        
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal("Predicted Results", okResult.Value);
 
+        Stream? nullStream = null;
+        _mockPredictRequestHandler.Setup(r => r.GetResponseStream(It.IsAny<WebResponse>())).Returns(nullStream);
+        result =await _mockPredictController.Predict();
+        var badResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(500, badResult.StatusCode);
+        Assert.True(badResult.Value.ToString().Contains("Internal server error: "));
+    }
 }
