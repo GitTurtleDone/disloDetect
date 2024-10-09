@@ -83,8 +83,8 @@ public class PredictControllerTests
     public async Task Test_SetConfidenceAndOverlap()
     {
         SetUpTests(_predictHandler.SavedImageFolderPath,_predictHandler.CredentialFilePath, "../Ref06_Fig4e.jpg", ["first_line", "second_line", "third_line"], "0.8", "0.9");
-        Assert.Equal("0.8", _predictHandler.Confidence);
-        Assert.Equal("0.9", _predictHandler.Overlap);
+        Assert.Equal("80", _predictHandler.Confidence);
+        Assert.Equal("90", _predictHandler.Overlap);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class PredictControllerTests
     {
         SetUpTests(_predictHandler.SavedImageFolderPath,_predictHandler.CredentialFilePath, "../Ref06_Fig4e.jpg", ["myKey", "myDataset", "myVersion"], "0.256789", "0.7");
         var result = _predictHandler.BuildRequestString(_mockFormCollection.Object);
-        string strExpected = "https://detect.roboflow.com/myDataset/myVersion?api_key=myKey&confidence=0.2567&overlap=0.7&name=";
+        string strExpected = "https://detect.roboflow.com/myDataset/myVersion?api_key=myKey&confidence=25.678&overlap=70&name=";
         Assert.True(result.RequestURL.Contains(strExpected));
     }
     

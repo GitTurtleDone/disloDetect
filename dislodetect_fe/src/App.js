@@ -15,7 +15,19 @@ function App() {
   const imgContainerRef = useRef(null); // reference to the photo element
   const [confidence, setConfidence] = useState(0.254);
   const [overlap, setOverlap] = useState(0.7);
+  const [predictRoboflow, setPredictRoboFlow] = useState(true);
+  const [txtSwitchPredict, setTxtSwitchPredict] = useState(
+    "Switch to Ultralytics"
+  );
 
+  const switchPredict = () => {
+    // if (predictRoboflow) {
+    //   setTxtSwitchPredict("Switch to Ultralytics")
+    // } else {
+    //   setTxtSwitchPredict("Switch to Roboflow")
+    // }
+    setPredictRoboFlow(!predictRoboflow);
+  };
   const updatePhotoFileSource = (source) => {
     setPhotoFileSource(source);
   };
@@ -42,6 +54,7 @@ function App() {
     console.log("overlap updated");
   };
   const { predicting, triggerPredict } = usePredict({
+    predictRoboflow,
     imgContainerRef,
     photoFile,
     confidence,
@@ -68,19 +81,48 @@ function App() {
       <p>Select only weak beam dark field TEM images</p>
       <UploadPhotoFile updatePhotoFileSource={updatePhotoFileSource} />
 
-      <button
-        onClick={triggerPredict}
-        style={{
-          backgroundColor: "#0055bb",
-          width: "150px",
-          height: "30px",
-          marginBottom: "30px",
-          color: "#ffffff",
-          border: "none",
-        }}
-      >
-        Predict (roboflow)
-      </button>
+      <div style={{ display: "grid", gridTemplateColumns: "250px 250px",justifyContent: "center" }}>
+        <button
+          onClick={triggerPredict}
+          style={{
+            backgroundColor: "#0055bb",
+            width: "200px",
+            height: "30px",
+            marginBottom: "30px",
+            color: "#ffffff",
+            border: "none",
+          }}
+        >
+          Predict ({predictRoboflow ? "Roboflow" : "Ultralytics"})
+        </button>
+
+        <button
+          onClick={switchPredict}
+          style={{
+            backgroundColor: "#ffffff",
+            borderColor: "#000000",
+            width: "200px",
+            height: "30px",
+            marginBottom: "30px",
+            color: "#000000",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            
+            
+          }}
+        >
+          <img
+            src="SwitchIcon.png"
+            style={{
+              height: "1.5em",
+              width: "1.5em",
+              marginRight: "0.5em"
+            }}
+          />
+          {predictRoboflow ? "Switch to Ultralytics" : "Switch to Roboflow"}
+        </button>
+      </div>
       {predicting && (
         <div className="overlay">
           <div className="overlay-content">
@@ -91,7 +133,7 @@ function App() {
 
       {Object.keys(customOutputInfos).map((key) => {
         const value = customOutputInfos[key];
-        
+
         return (
           <CustomInput
             key={key}

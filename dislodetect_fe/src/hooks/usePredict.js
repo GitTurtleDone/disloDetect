@@ -6,7 +6,14 @@ import axios from "axios";
 export function usePredict(props) {
   const [shouldPredict, setShouldPredict] = useState(false);
   const [predicting, setPredicting] = useState(false);
-  const { imgContainerRef, photo, confidence, overlap, updateSumBhi } = props;
+  const {
+    predictRoboflow,
+    imgContainerRef,
+    photo,
+    confidence,
+    overlap,
+    updateSumBhi,
+  } = props;
   const triggerRemoveOldBB = useRemoveOldBB();
   const triggerUpdateDisloDensity = useUpdateDisloDensity();
   const triggerPredict = () => {
@@ -16,21 +23,29 @@ export function usePredict(props) {
     setPredicting(true);
     triggerRemoveOldBB();
     const formData = new FormData();
-    formData.append("file", photo);
+    //formData.append("file", photo);
     console.log(`confidence ${confidence}`);
     console.log(`overlap ${overlap}`);
-    formData.append("confidence", parseFloat(confidence).toFixed(3) * 100);
-    formData.append("overlap", parseFloat(overlap).toFixed(3) * 100);
+    formData.append("confidence", parseFloat(confidence).toFixed(3));
+    formData.append("overlap", parseFloat(overlap).toFixed(3));
+
     try {
-      const response = await axios.post(
-        "http://localhost:5226/Predict",
-        formData
-      );
+      let requestURL = "";
+      console.log("predictRoboflow: ", predictRoboflow);
+      if (predictRoboflow === true) {
+        requestURL = "http://localhost:5226/Predict";
+      } else {
+        requestURL = "http://localhost:5000/predict";
+      }
+      const response = await axios.post(requestURL, formData);
       let results = response.data;
       // console.log("Data received: ", results);
-      let formattedResults = formatResults(results);
-      console.log(`Formatted results: \n`, formattedResults);
-      processBB(formattedResults, imgContainerRef);
+
+      if (predictRoboflow) {
+        results = formatResults(results);
+      }
+      console.log(`Formatted results: \n`, results);
+      processBB(results, imgContainerRef);
     } catch (error) {
       console.log("Error why predicting: ", error);
     } finally {

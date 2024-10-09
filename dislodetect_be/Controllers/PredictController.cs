@@ -173,8 +173,10 @@ public class PredictRequestHandler: IPredictRequestHandler
 
     public void SetConfidenceAndOverlap(IFormCollection formCollection)
     {
-        Confidence = formCollection["confidence"];
-        Overlap = formCollection["overlap"];
+        var confidence = float.Parse(formCollection["confidence"])*100; 
+        var overlap = float.Parse(formCollection["overlap"])*100;
+        Confidence = confidence.ToString();
+        Overlap = overlap.ToString();
     }
     public (string? RequestURL, string Message) BuildRequestString(IFormCollection formCollection)
     {
@@ -194,8 +196,8 @@ public class PredictRequestHandler: IPredictRequestHandler
                     "https://detect.roboflow.com/" +
                     DATASET_NAME + "/" + DATASET_VERSION +
                     "?api_key=" + API_KEY +
-                    "&confidence=" + Confidence[..Math.Min(6, Confidence.Length)] +
-                    "&overlap=" + Overlap[..Math.Min(6, Overlap.Length)] +
+                    "&confidence=" + Confidence[..Math.Min(4, Confidence.Length)] +
+                    "&overlap=" + Overlap[..Math.Min(4, Overlap.Length)] +
                     "&name=" + FileName;
         } catch (Exception ex)
         {

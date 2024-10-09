@@ -15,11 +15,13 @@ from werkzeug.utils import secure_filename
 #//--------do NOT delete, predict (roboflow) implementation------------
 from datetime import datetime
 import shutil
+from flask_cors import CORS
 
 #from PIL import Image
 from ultralytics import YOLO
 #import uuid
 app = Flask(__name__)
+CORS(app)
 
 # Initialize a global variables
 saveFolderPath = "./Public/SavedImages/"
@@ -91,22 +93,31 @@ model = YOLO('./runs/GCL/train36/weights/best.pt')
 #-------------do NOT delete these codes -----------------
 @app.route('/predict', methods=['GET','POST'])
 def predictImage():
-    global model, filePath, confidence, IoU
+    global model, filePath, confidence, IoU, saveFolderPath
     # image_url = "./Ref04_Fig4a_Rot.jpg"
     # response = requests.get(image_url)
     # img = Image.open(BytesIO(response.content))
     # # Generate the filename using the counter
     # filename = f"./PredictedImages/image.jpg"
     # img.save(filename)
-    data = request.get_json()
-    confidence = float(data.get('confidence'))
-    IoU = float(data.get('overlap'))
+    ##---DO NOT DELETE- get request sent from fetch
+    # data = request.get_json()
+    # confidence = float(data.get('confidence'))
+    # IoU = float(data.get('overlap'))
+    ##---DO NOT DELETE- get request sent from fetch
+
+    filePath = os.path.join(app.config['UPLOAD_FOLDER'], os.listdir(saveFolderPath)[0])
+    confidence = float(request.form.get('confidence'))
+    IoU = float(request.form.get('overlap'))
+    
     result = model.predict(source=filePath, classes=None, conf=confidence, iou=IoU)
     returnData = ([result[0].boxes.cls.cpu().numpy().tolist(),
             result[0].boxes.conf.cpu().numpy().tolist(),
             (result[0].boxes.xywhn.cpu().numpy()*100).tolist()])
-    # return bboxes, the last line contains coordinates in percentage
+    # # return bboxes, the last line contains coordinates in percentage
     print(returnData)
+
+    # returnData = "return data"
     return  returnData
 #-------------do NOT delete these codes -----------------
 
