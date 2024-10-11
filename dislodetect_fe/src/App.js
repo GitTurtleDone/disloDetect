@@ -7,6 +7,7 @@ import InputSlider from "./components/InputSlider";
 import { useUpdateDisloDensity } from "./hooks/useUpdateDisloDensity";
 import { usePredict } from "./hooks/usePredict";
 import Infos from "./components/Infos.json";
+import PredictButton from "./components/PredictButton";
 
 function App() {
   const [photoFileSource, setPhotoFileSource] = useState();
@@ -16,9 +17,13 @@ function App() {
   const [confidence, setConfidence] = useState(0.254);
   const [overlap, setOverlap] = useState(0.7);
   const [predictRoboflow, setPredictRoboFlow] = useState(true);
-  const [txtSwitchPredict, setTxtSwitchPredict] = useState(
-    "Switch to Ultralytics"
-  );
+  // const [txtSwitchPredict, setTxtSwitchPredict] = useState(
+  //   "Switch to Ultralytics"
+  // );
+
+  const updatePredictRoboflow = (data) => {
+    setPredictRoboFlow(data);
+  };
 
   const switchPredict = () => {
     // if (predictRoboflow) {
@@ -81,7 +86,13 @@ function App() {
       <p>Select only weak beam dark field TEM images</p>
       <UploadPhotoFile updatePhotoFileSource={updatePhotoFileSource} />
 
-      <div style={{ display: "grid", gridTemplateColumns: "250px 250px",justifyContent: "center" }}>
+      {/* <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "250px 250px",
+          justifyContent: "center",
+        }}
+      >
         <button
           onClick={triggerPredict}
           style={{
@@ -108,8 +119,6 @@ function App() {
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            
-            
           }}
         >
           <img
@@ -117,12 +126,16 @@ function App() {
             style={{
               height: "1.5em",
               width: "1.5em",
-              marginRight: "0.5em"
+              marginRight: "0.5em",
             }}
           />
           {predictRoboflow ? "Switch to Ultralytics" : "Switch to Roboflow"}
         </button>
-      </div>
+      </div> */}
+      <PredictButton
+        triggerPredict={triggerPredict}
+        updatePredictRoboflow={updatePredictRoboflow}
+      />
       {predicting && (
         <div className="overlay">
           <div className="overlay-content">
