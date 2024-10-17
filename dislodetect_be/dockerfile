@@ -1,0 +1,20 @@
+#Note: context would be ../dislodetect_be
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app/dislodetect_be
+EXPOSE 5226
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /app/dislodetect_be
+COPY ["./dislodetect_be.csproj", "./"]
+RUN dotnet restore "./dislodetect_be.csproj"
+COPY . .
+# RUN mv /app/dislodetect_be/Roboflow.txt /app/Roboflow.txt
+RUN dotnet build "dislodetect_be.csproj" -c Release -o /app/dislodetect_be/build
+FROM build AS publish
+RUN dotnet publish "dislodetect_be.csproj" -c Release -o /app/dislodetect_be/publish
+FROM base AS final
+WORKDIR /app/dislodetect_be
+COPY --from=publish /app/dislodetect_be/publish .
+ENTRYPOINT [ "dotnet", "dislodetect_be.dll" ]
+

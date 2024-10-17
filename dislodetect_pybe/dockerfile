@@ -1,8 +1,8 @@
 FROM --platform=$BUILDPLATFORM python:3.10-slim-bookworm AS builder
 
-WORKDIR /app
+WORKDIR /app/dislodetect_pybe
 
-COPY requirements.txt /app
+COPY requirements.txt /app/dislodetect_pybe
 
 RUN pip3 install update pip
 
@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 # Install libgl1-mesa-glx
 # RUN apt-get install libgl1-mesa-glx
-COPY . /app
+COPY . /app/dislodetect_pybe
 # RUN inference server start
 
 ENTRYPOINT ["python3"]

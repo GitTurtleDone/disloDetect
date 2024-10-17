@@ -1,0 +1,32 @@
+docker compose.yalm outside
+# services:
+#   dislodetect_be:
+#     build:
+#       context: ./disloDetect/dislodetect_be # set it outside of dislodetect_be to be able to copy Roboflow.txt
+#       dockerfile: dockerfile
+#     volumes:
+#       - ./disloDetect/Public:/app/Public
+#       - ./disloDetect/Roboflow.txt:/app/Roboflow.txt
+#     ports:
+#       - "5226:5226"
+#       - "5227:443"
+#   dislodetect_fe:
+#     build:
+#       context: ./disloDetect/dislodetect_fe
+#       dockerfile: dockerfile
+#     volumes:
+#       - ./disloDetect/Public:/app/Public
+#     ports:
+#       - "3000:3000"
+#   dislodetect_pybe:
+#     build:
+#       context: ./disloDetect/dislodetect_pybe
+#       dockerfile: dockerfile
+#       target: builder
+#     # flask requires SIGINT to stop gracefully
+#     # (default stop signal from Compose is SIGTERM)
+#     stop_signal: SIGINT
+#     volumes:
+#       - ./disloDetect/Public:/app/Public
+#     ports:
+#       - "5000:5000"

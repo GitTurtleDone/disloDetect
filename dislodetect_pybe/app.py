@@ -24,8 +24,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize a global variables
-saveFolderPath = "./Public/SavedImages/"
-saveTrainingFolderPath = "./Public/ForTrainingImages/"
+saveFolderPath = "../Public/SavedImages/"
+saveTrainingFolderPath = "../Public/ForTrainingImages/"
 filePath = ""
 trainingFilePath = ""
 app.config['UPLOAD_FOLDER'] = saveFolderPath
