@@ -33,9 +33,9 @@ export function usePredict(props) {
       let requestURL = "";
       console.log("predictRoboflow: ", predictRoboflow);
       if (predictRoboflow === true) {
-        requestURL = "http://localhost:5226/Predict";
+        requestURL = `${process.env.REACT_APP_DOTNET_API_URL}/predict`; //  http://localhost:5226
       } else {
-        requestURL = "http://localhost:5000/predict";
+        requestURL = `${process.env.REACT_APP_PYTHON_API_URL}/predict`; //"http://localhost:5000/predict"
       }
       const response = await axios.post(requestURL, formData);
       let results = response.data;

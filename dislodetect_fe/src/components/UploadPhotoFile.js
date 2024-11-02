@@ -25,7 +25,7 @@ function UploadPhotoFile({ updatePhotoFileSource }) {
     formData.append("usePhotoAllowed", usePhotoAllowed);
     try {
       const response = await axios.post(
-        "http://localhost:5226/UploadPhotoFile",
+        `${process.env.REACT_APP_DOTNET_API_URL}/UploadPhotoFile`,
         formData
       );
       console.log("Data received: ", response.data);
