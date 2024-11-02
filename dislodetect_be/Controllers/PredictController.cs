@@ -132,7 +132,7 @@ public interface IPredictRequestHandler
 public class PredictRequestHandler: IPredictRequestHandler
 {
     public string SavedImageFolderPath {get;} = "../Public/SavedImages";
-    public string CredentialFilePath {get;} = "../Roboflow.txt";
+    public string CredentialFilePath {get;} = "../Public/Roboflow.txt";
     public string? FileName {get;set;}
     public string? Confidence {get; set;}
     public string? Overlap {get; set; }
