@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app/dislodetect_be
 EXPOSE 5226
-EXPOSE 443
+EXPOSE 7226
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app/dislodetect_be

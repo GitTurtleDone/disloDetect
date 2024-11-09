@@ -14,23 +14,35 @@
 // using Microsoft.AspNetCore.Http; 
 // using Microsoft.AspNetCore.Http.HttpResults;
 using dislodetect_be.Controllers;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// builder.WebHost.ConfigureKestrel(options =>
+// {
+//     options.ListenAnyIP(5226);
+//     options.ListenAnyIP(7226, ListenOptions =>{
+//         ListenOptions.UseHttps();
+//     });
+// });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IPredictRequestHandler, PredictRequestHandler>();
 
+var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
+                    ?? "http://localhost:3000,https://dislodetect.azurewebsites.net:3000";
+var originArray = allowedOrigins.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
 builder.Services.AddCors(options=>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+        // builder.WithOrigins(originArray).AllowAnyHeader().AllowAnyMethod();
+        builder.WithOrigins(originArray).AllowAnyHeader().AllowAnyMethod();
     }
     );
 });
@@ -39,6 +51,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
