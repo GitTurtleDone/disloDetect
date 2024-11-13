@@ -21,7 +21,9 @@ from flask_cors import CORS
 from ultralytics import YOLO
 #import uuid
 app = Flask(__name__)
-CORS(app)
+allowedOrigins = os.getenv("ALLOWED_ORIGINS","http://localhost:3000,https://dislodetect.azurewebsites.net")
+originList = [origin.strip() for origin in allowedOrigins.split(",")]
+CORS(app, origins=originList)
 
 # Initialize a global variables
 saveFolderPath = "../Public/SavedImages/"
@@ -158,5 +160,9 @@ def predictImage():
 # //--------do NOT delete, predict (roboflow) implementation------------
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    environment = os.getenv('FLASK_ENV', 'development')
+    if environment == 'production':
+        app.run(host='0.0.0.0', port=5000)
+    else:
+        app.run(host='localhost', port=5000, debug=True, ssl_context=('cert.pem','key.pem'))
 
