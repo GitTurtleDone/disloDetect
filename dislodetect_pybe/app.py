@@ -41,8 +41,8 @@ files = [item for item in dirContents if os.path.isfile(os.path.join(saveTrainin
 imageCounter = len(files) + 1
 # connect to the model in Roboflow
 # rbfModel = inference.get_model("dislodetect/4") # Roboflow Model
-confidence = 0.5;
-IoU = 0.5;
+confidence = 0.254;
+IoU = 0.7;
 
 @app.route('/')
 def index():
@@ -73,7 +73,7 @@ def save_photo():
     if chbTrainingPhoto=="true":
         print('Went in if python: ', chbTrainingPhoto)
         trainingFilePath = filePath
-        trainingFilePath = trainingFilePath.replace("SavedImages/", "ForTrainingImages/"+ str(imageCounter) + "_" + datetime.now().strftime("%Y%m%d%H%M%S") + "_")
+        trainingFilePath = trainingFilePath.replace("SavedImages/", "ForTrainingImages/Store/"+ str(imageCounter) + "_" + datetime.now().strftime("%Y%m%d%H%M%S") + "_")
         print(trainingFilePath)        
         shutil.copy2(filePath,trainingFilePath)
         imageCounter += 1
