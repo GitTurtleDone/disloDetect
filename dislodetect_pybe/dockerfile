@@ -19,6 +19,8 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # RUN apt-get install libgl1-mesa-glx
 COPY . /app/dislodetect_pybe
 # RUN inference server start
+ARG FLASK_ENV=development
+ENV FLASK_ENV=$FLASK_ENV
 
 ENTRYPOINT ["python3"]
 CMD ["app.py"]

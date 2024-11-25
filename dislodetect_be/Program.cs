@@ -24,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 // {
 //     options.ListenAnyIP(5226);
 //     options.ListenAnyIP(7226, ListenOptions =>{
-//         ListenOptions.UseHttps();
+//         ListenOptions.UseHttps("./app/certs/cert.pfx", "dotnetpass");
 //     });
 // });
 builder.Services.AddEndpointsApiExplorer();
@@ -34,7 +34,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IPredictRequestHandler, PredictRequestHandler>();
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
-                    ?? "http://localhost:3000,https://dislodetect.azurewebsites.net:3000";
+                    ?? "http://localhost:3000,https://localhost:3000,http://dislodetect.azurewebsites.net:3000,https://dislodetect.azurewebsites.net:3000,http://dislodetect.azurewebsites.net,https://dislodetect.azurewebsites.net";
 var originArray = allowedOrigins.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
 builder.Services.AddCors(options=>

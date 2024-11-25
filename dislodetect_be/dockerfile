@@ -16,5 +16,6 @@ RUN dotnet publish "dislodetect_be.csproj" -c Release -o /app/dislodetect_be/pub
 FROM base AS final
 WORKDIR /app/dislodetect_be
 COPY --from=publish /app/dislodetect_be/publish .
+COPY ./certs /app/dislodetect_be/certs
 ENTRYPOINT [ "dotnet", "dislodetect_be.dll" ]
 
