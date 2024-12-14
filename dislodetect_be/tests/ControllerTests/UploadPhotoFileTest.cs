@@ -1,7 +1,7 @@
 using Xunit;
 using dislodetect_be.Controllers;
 using Microsoft.AspNetCore.Mvc;
- using Moq;
+using Moq;
 using System.Text;
 
 public class UploadPhotoFileControllerTests

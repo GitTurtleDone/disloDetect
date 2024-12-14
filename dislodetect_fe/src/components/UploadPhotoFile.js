@@ -39,7 +39,16 @@ function UploadPhotoFile({ updatePhotoFileSource }) {
     setUsePhotoAllowed(!usePhotoAllowed);
   };
   return (
-    <div style={{marginBottom: "30px"}}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateRows: "auto",
+        rowGap: "15px",
+        justifyItems: "start",
+
+        marginBottom: "30px",
+      }}
+    >
       <input
         text="Choose a WBDF TEM image"
         type="file"
@@ -48,12 +57,17 @@ function UploadPhotoFile({ updatePhotoFileSource }) {
         onChange={handleFileChange}
       ></input>
       <button onClick={handleUpload}>Upload the chosen image</button>
-      <input
-        type="checkbox"
-        id="allowUse"
-        checked={usePhotoAllowed}
-        onChange={handleCheckboxChange}
-      ></input>
+      <div>
+        <input
+          type="checkbox"
+          id="allowUse"
+          checked={usePhotoAllowed}
+          onChange={handleCheckboxChange}
+        ></input>
+        <label htmlFor="allowUse">
+        Allow to use the uploaded photo to improve model training
+        </label>
+      </div>
     </div>
   );
 }

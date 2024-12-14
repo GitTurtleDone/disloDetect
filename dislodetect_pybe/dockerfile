@@ -29,15 +29,18 @@ RUN apt-get update \
     && echo "root:Docker!" | chpasswd \
     && chmod u+x ./entrypoint.sh
 COPY sshd_config /etc/ssh/
+COPY ./Public ./app/Public
+# COPY entrypoint.sh ./entrypoint.sh
+# RUN chmod u+x ./entrypoint.sh
 
 EXPOSE 5000 2222
 
 # Start and enable SSH
 
-ENTRYPOINT ["./entrypoint.sh"]
+#ENTRYPOINT ["./entrypoint.sh"]
 
-# ENTRYPOINT ["python3"]
-# CMD ["app.py"]
+ENTRYPOINT ["python3"]
+CMD ["app.py"]
 
 # FROM builder as dev-envs
 
