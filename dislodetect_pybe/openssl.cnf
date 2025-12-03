@@ -18,3 +18,5 @@ DNS.3 = localhost:5000
 DNS.4 = dislodetect_fe
 DNS.5 = dislodetect_fe:3000
 DNS.6 = localhost:3000
+DNS.7 = localhost:5226
+DNS.8 = localhost:7226

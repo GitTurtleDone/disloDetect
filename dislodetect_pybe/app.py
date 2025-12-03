@@ -19,6 +19,7 @@ from flask_cors import CORS
 
 #from PIL import Image
 from ultralytics import YOLO
+import torch
 #import uuid
 app = Flask(__name__)
 allowedOrigins = os.getenv("ALLOWED_ORIGINS","http://localhost:3000,https://localhost:3000,http://dislodetect.azurewebsites.net:3000,https://dislodetect.azurewebsites.net:3000,http://dislodetect.azurewebsites.net,https://dislodetect.azurewebsites.net")
@@ -94,9 +95,10 @@ def save_photo():
 
 model = YOLO('./runs/GCL/train31/weights/best.pt')
 #-------------do NOT delete these codes -----------------
+device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 @app.route('/predict', methods=['GET','POST'])
 def predictImage():
-    global model, filePath, confidence, IoU, saveFolderPath
+    global model, filePath, confidence, IoU, saveFolderPath, device
     # image_url = "./Ref04_Fig4a_Rot.jpg"
     # response = requests.get(image_url)
     # img = Image.open(BytesIO(response.content))
@@ -113,7 +115,7 @@ def predictImage():
     confidence = float(request.form.get('confidence'))
     IoU = float(request.form.get('overlap'))
     
-    result = model.predict(source=filePath, classes=None, conf=confidence, iou=IoU)
+    result = model.predict(source=filePath, classes=None, conf=confidence, iou=IoU, device=device)
     returnData = ([result[0].boxes.cls.cpu().numpy().tolist(),
             result[0].boxes.conf.cpu().numpy().tolist(),
             (result[0].boxes.xywhn.cpu().numpy()*100).tolist()])

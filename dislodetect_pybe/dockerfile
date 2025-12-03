@@ -12,7 +12,7 @@ RUN apt update \
     && apt install --no-install-recommends -y python3-pip git zip unzip wget curl htop libgl1 libglib2.0-0 libpython3-dev gnupg g++ libusb-1.0-0
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
+    pip install -r requirements.txt
 
 
 # Install libgl1-mesa-glx
@@ -31,6 +31,9 @@ RUN apt-get update \
 COPY sshd_config /etc/ssh/
 
 EXPOSE 5000 2222
+
+# Fix line endings for entrypoint.sh in case of crlf endings
+RUN sed -i 's/\r$//' ./entrypoint.sh
 
 # Start and enable SSH
 
