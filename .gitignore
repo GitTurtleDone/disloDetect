@@ -2,3 +2,5 @@ Roboflow.txt
 ./dislodetect_be/bin/Debug/Roboflow.txt
 ./ssh_config
 ./dislodetect_pybe/.venv/
+./dislodetect_be/obj/
+./dislodetect_fe/node_modules/
