@@ -36,7 +36,11 @@ builder.Services.AddScoped<IPredictRequestHandler, PredictRequestHandler>();
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
                     ?? "http://localhost:3000,https://localhost:3000,http://dislodetect.azurewebsites.net:3000,https://dislodetect.azurewebsites.net:3000,http://dislodetect.azurewebsites.net,https://dislodetect.azurewebsites.net";
 var originArray = allowedOrigins.Split(",", StringSplitOptions.RemoveEmptyEntries);
-
+Console.WriteLine("Allowed Origins:");
+foreach (var origin in originArray)
+{
+    Console.WriteLine(origin);
+}
 builder.Services.AddCors(options=>
 {
     options.AddDefaultPolicy(builder =>
