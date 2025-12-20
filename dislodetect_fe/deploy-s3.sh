@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Configuration
-BUCKET_NAME="dislodetect-frontend-$(date +%s)"  # Unique bucket name
-REGION="us-east-1"  # Change to your preferred region
+BUCKET_NAME="dislodetect-$(date +%s)"  # Unique bucket name
+REGION="ap-southeast-6"  # Change to your preferred region
 PROFILE="default"   # Change to your AWS profile if needed
 
 echo "🚀 Deploying React app to S3 + CloudFront..."
@@ -10,6 +10,10 @@ echo "🚀 Deploying React app to S3 + CloudFront..."
 # Build the React app
 echo "📦 Building React app..."
 npm run build
+
+# Copy shared Public folder to build
+echo "📁 Copying shared Public folder..."
+cp -r ../Public ./build/
 
 # Create S3 bucket
 echo "🪣 Creating S3 bucket: $BUCKET_NAME"
@@ -135,6 +139,6 @@ Region: $REGION
 EOF
 
 # Cleanup temporary files
-rm bucket-policy.json cloudfront-config.json
+#rm bucket-policy.json cloudfront-config.json
 
 echo "💾 Deployment info saved to deployment-info.txt"
