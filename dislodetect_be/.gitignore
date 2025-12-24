@@ -1,2 +1,15 @@
+# Sensitive files
+setup-parameters.sh
 Roboflow.txt
-./bin/Debug/Roboflow.txt
+
+# Generated files
+packaged.yaml
+bin/
+obj/
+
+# AWS files
+.aws/
+.template.yaml
+.packaged.yaml
+.deploy-lambda.sh
+.deploy-cli.sh

@@ -4,3 +4,4 @@ Roboflow.txt
 ./dislodetect_pybe/.venv/
 ./dislodetect_be/obj/
 ./dislodetect_fe/node_modules/
+./Public/Roboflow.txt
