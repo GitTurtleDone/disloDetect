@@ -10,6 +10,7 @@ export function usePredict(props) {
     predictRoboflow,
     imgContainerRef,
     photo,
+    photoUrl,
     confidence,
     overlap,
     updateSumBhi,
@@ -26,6 +27,7 @@ export function usePredict(props) {
     //formData.append("file", photo);
     console.log(`confidence ${confidence}`);
     console.log(`overlap ${overlap}`);
+    formData.append("photoUrl", photoUrl);
     formData.append("confidence", parseFloat(confidence).toFixed(3));
     formData.append("overlap", parseFloat(overlap).toFixed(3));
 

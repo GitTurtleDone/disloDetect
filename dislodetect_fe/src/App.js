@@ -10,7 +10,9 @@ import Infos from "./components/Infos.json";
 import PredictButton from "./components/PredictButton";
 
 function App() {
-  const [photoFileSource, setPhotoFileSource] = useState();
+  const [photoFileSource, setPhotoFileSource] = useState(); // local URL of the uploaded photo
+  const [photoUrl, setPhotoUrl] = useState(""); // URL received from backend
+  const [sessionId, setSessionId] = useState(""); // session ID received from backend
   const [photoFile, setPhotoFile] = useState();
   const [sumBhi, setSumBhi] = useState(3.46);
   const imgContainerRef = useRef(null); // reference to the photo element
@@ -35,6 +37,12 @@ function App() {
   };
   const updatePhotoFileSource = (source) => {
     setPhotoFileSource(source);
+  };
+  const updatePhotoUrl = (url) => {
+    setPhotoUrl(url);
+  };
+  const updateSessionId = (id) => {
+    setSessionId(id);
   };
 
   const updateSumBhi = (data) => {
@@ -62,6 +70,7 @@ function App() {
     predictRoboflow,
     imgContainerRef,
     photoFile,
+    photoUrl, // pass photoUrl provided by the backend to usePredict
     confidence,
     overlap,
     updateSumBhi,
@@ -84,7 +93,11 @@ function App() {
         <img src={photoFileSource} alt="" />
       </div>
       <p>Select only weak beam dark field TEM images</p>
-      <UploadPhotoFile updatePhotoFileSource={updatePhotoFileSource} />
+      <UploadPhotoFile
+        updatePhotoFileSource={updatePhotoFileSource}
+        updatePhotoUrl={updatePhotoUrl}
+        updateSessionId={updateSessionId}
+      />
 
       {/* <div
         style={{
@@ -181,7 +194,7 @@ function App() {
         );
       })}
       <footer>
-        <p class="copyright">&copy; 2024 Giang T. Dang. All rights reserved.</p>
+        <p class="copyright">&copy; 2026 Giang T. Dang. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { useRemoveOldBB } from "../hooks/useRemoveOldBB.js";
 import { useResetInputs } from "../hooks/useResetInputs.js";
-function UploadPhotoFile({ updatePhotoFileSource }) {
+function UploadPhotoFile({
+  updatePhotoFileSource,
+  updatePhotoUrl,
+  updateSessionId,
+}) {
   const triggerRemoveOldBB = useRemoveOldBB();
   const triggerResetInputs = useResetInputs();
-  // const { updatePhotoFileSource} = props;
   const [photoFile, setPhotoFile] = useState(null);
   const [photoFileURL, setPhotoFileURL] = useState();
   const [usePhotoAllowed, setUsePhotoAllowed] = useState(false);
@@ -29,7 +32,13 @@ function UploadPhotoFile({ updatePhotoFileSource }) {
         formData
       );
       console.log("Data received: ", response.data);
-      updatePhotoFileSource(photoFileURL);
+
+      // Extract imageUrl from response
+      const { sessionId, fileName, photoUrl } = response.data;
+
+      updatePhotoFileSource(photoFileURL); // local URL of the uploaded photo
+      updatePhotoUrl(photoUrl); // backend URL of the uploaded photo
+      updateSessionId(sessionId); // session ID from backend
       triggerRemoveOldBB();
     } catch (error) {
       console.log("Error: ", error);
@@ -39,7 +48,7 @@ function UploadPhotoFile({ updatePhotoFileSource }) {
     setUsePhotoAllowed(!usePhotoAllowed);
   };
   return (
-    <div style={{marginBottom: "30px"}}>
+    <div style={{ marginBottom: "30px" }}>
       <input
         text="Choose a WBDF TEM image"
         type="file"

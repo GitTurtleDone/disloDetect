@@ -1,32 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\dislodetect_be.csproj": {}
+    "/home/giang/Programming/AI/disloDetect/dislodetect_be/dislodetect_be.csproj": {}
   },
   "projects": {
-    "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\dislodetect_be.csproj": {
+    "/home/giang/Programming/AI/disloDetect/dislodetect_be/dislodetect_be.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\dislodetect_be.csproj",
+        "projectUniqueName": "/home/giang/Programming/AI/disloDetect/dislodetect_be/dislodetect_be.csproj",
         "projectName": "dislodetect_be",
-        "projectPath": "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\dislodetect_be.csproj",
-        "packagesPath": "C:\\Users\\gtd19\\.nuget\\packages\\",
-        "outputPath": "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\obj\\",
+        "projectPath": "/home/giang/Programming/AI/disloDetect/dislodetect_be/dislodetect_be.csproj",
+        "packagesPath": "/home/giang/.nuget/packages/",
+        "outputPath": "/home/giang/Programming/AI/disloDetect/dislodetect_be/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\gtd19\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/giang/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,18 +32,32 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.300"
+        }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "AWSSDK.Extensions.NETCore.Setup": {
+              "target": "Package",
+              "version": "[3.7.301, )"
+            },
+            "AWSSDK.S3": {
+              "target": "Package",
+              "version": "[3.7.308, )"
+            },
+            "Amazon.Lambda.AspNetCoreServer.Hosting": {
+              "target": "Package",
+              "version": "[1.7.0, )"
+            },
+            "Amazon.Lambda.Core": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Amazon.Lambda.Serialization.SystemTextJson": {
+              "target": "Package",
+              "version": "[2.4.1, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.7, )"
@@ -101,7 +108,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

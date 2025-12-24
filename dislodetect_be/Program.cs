@@ -15,6 +15,7 @@
 // using Microsoft.AspNetCore.Http.HttpResults;
 using dislodetect_be.Controllers;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Amazon.S3;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IPredictRequestHandler, PredictRequestHandler>();
+builder.Services.AddScoped<IUploadPhotoFileRequestHandler, UploadPhotoFileRequestHandler>();
+builder.Services.AddAWSService<IAmazonS3>();
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
                     ?? "http://localhost:3000,https://localhost:3000,http://dislodetect.azurewebsites.net:3000,https://dislodetect.azurewebsites.net:3000,http://dislodetect.azurewebsites.net,https://dislodetect.azurewebsites.net";

@@ -6,8 +6,12 @@ using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-using System.Data.SqlTypes;
+using Amazon.S3;
+using Amazon.S3.Model;
 namespace dislodetect_be.Controllers;
+using System.Data.SqlTypes;
+using System.Web;
+
 [ApiController]
 [Route("[controller]")]
 public class PredictController : ControllerBase
@@ -22,93 +26,71 @@ public class PredictController : ControllerBase
     [HttpPost (Name = "PostPredict")]
     public async Task<IActionResult> Predict()
     {
-        string? responseContent;
         try
         {   
+            // Add CORS headers
+            Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            Response.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
             var formCollection = await Request.ReadFormAsync();
+            string photoUrl = formCollection["photoUrl"];
+            if (string.IsNullOrEmpty(photoUrl))
+                return BadRequest("photoUrl is required");
+
+            
+            // Get image from S3
+            var (base64Data, message) = await _predictRequestHandler.GetImageFromS3Async(photoUrl);
+            if (base64Data == null)
+            {
+                return BadRequest(message);
+            }
+            
+            // Build request and send to Roboflow using WebRequest
             string? requestURL = _predictRequestHandler.BuildRequestString(formCollection).RequestURL;
-            var request = _predictRequestHandler.Create(requestURL);
-            Console.WriteLine($"requestURL: {requestURL}");
-            byte[]? data = _predictRequestHandler.GetImage().ImageData;
-            // string? _message = null;
-            var stream = _predictRequestHandler.GetRequestStream(request,data);
+            Console.WriteLine($"Request URL: {requestURL}");
+            Console.WriteLine($"Base64 length: {base64Data.Length}");
+            Console.WriteLine($"First 50 chars of base64: {base64Data.Substring(0, Math.Min(50, base64Data.Length))}");
             
-            var response = _predictRequestHandler.GetResponse(request);
-            var responseStream = _predictRequestHandler.GetResponseStream(response);
-
-            using StreamReader sr = new(responseStream);
-            responseContent =  sr.ReadToEnd();
-            //responseContent = _predictRequestHandler.GetResponseContent(responseStream);
+            // Convert base64 string to byte array (as ASCII, not UTF-8)
+            var data = Encoding.ASCII.GetBytes(base64Data);
             
-                
+            // Service Request Config
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             
-            // string publicFolderPath = @"../Public/SavedImages";
-            // string fileName = Directory.GetFiles(publicFolderPath)[0];
-            // byte[] image = System.IO.File.ReadAllBytes(fileName);
-            // string encoded = Convert.ToBase64String(image);
-            // byte[] data = System.Text.Encoding.ASCII.GetBytes(encoded);
-            // string[] lines = System.IO.File.ReadAllLines("../Roboflow.txt");
-            // string API_KEY = lines[0];
-            // string DATASET_NAME = lines[1];
-            // string DATASET_VERSION = lines[2];
-            // var formCollection = await Request.ReadFormAsync();
-            // string confidence = formCollection["confidence"];
-            // string overlap = formCollection["overlap"];
+            // Configure Request
+            WebRequest request = WebRequest.Create(requestURL);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = data.Length;
             
-            // Console.WriteLine($"confidence: {confidence[..Math.Min(4, confidence.Length)]}");
-            // Console.WriteLine($"overlap: {overlap[..Math.Min(4, overlap.Length)]}");
+            // Write Data
+            using (Stream stream = request.GetRequestStream())
+            {
+                stream.Write(data, 0, data.Length);
+            }
             
+            // Get Response
+            string responseContent = null;
+            using (WebResponse response = request.GetResponse())
+            {
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader sr = new StreamReader(stream))
+                    {
+                        responseContent = sr.ReadToEnd();
+                    }
+                }
+            }
             
-            // //Contruct the URL
-            // string uploadURL =
-            //         "https://detect.roboflow.com/" +
-            //         DATASET_NAME + "/" + DATASET_VERSION +
-            //         "?api_key=" + API_KEY +
-            //         "&confidence=" + confidence[..Math.Min(4, confidence.Length)] +
-            //         "&overlap=" + overlap[..Math.Min(4, overlap.Length)] +
-            //         "&name=" + fileName;
-            // // Service Request Config
-
-            // Console.WriteLine($"predictURL: {uploadURL}");
-            // ServicePointManager.Expect100Continue = true;
-            // ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            
-            // //Configure Request
-            // WebRequest request = WebRequest.Create(uploadURL);
-            // request.Method = "POST";
-            // request.ContentType = "application/x-www-form-urlencoded";
-            // request.ContentLength = data.Length;
-
-            // // Write Data
-            // using (Stream stream = request.GetRequestStream())
-            // {
-            //     stream.Write(data, 0, data.Length);
-            // }
-
-            // // Get Response
-
-            // string responseContent = null;
-            // using (WebResponse response = request.GetResponse())
-            // {
-            //     using (Stream stream = response.GetResponseStream())
-            //     {
-            //         using (StreamReader sr99 = new StreamReader(stream))
-            //         {
-            //             responseContent = sr99.ReadToEnd();
-            //         }
-            //     }
-            // }
-
-            // // Console.WriteLine($"Image in the public folder: {fileName}");
-            // // Console.WriteLine($"Response Content: {responseContent}");
-            
+            Console.WriteLine(responseContent);
             return Ok(responseContent);
         } 
         catch (Exception ex)
         {
+            Console.WriteLine($"General exception: {ex.Message}");
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-
     }
 }
 
@@ -116,14 +98,11 @@ public interface IPredictRequestHandler
 {
     string? Confidence {get; set;}
     string? Overlap {get; set;}
-    string SavedImageFolderPath {get;}
-    string CredentialFilePath {get;}
-    (byte[]? ImageData, string? Message) GetImage();
-    (string[]? Credentials, string Message) GetCredentials();
+    Task<(string? Base64Data, string? Message)> GetImageFromS3Async(string photoUrl);
+    
     void SetConfidenceAndOverlap(IFormCollection formCollection);
     (string? RequestURL, string Message) BuildRequestString(IFormCollection formCollection);
     WebRequest? Create(string? requestURL);
-    Stream? GetRequestStream(WebRequest? request, byte[]? data);
     WebResponse? GetResponse(WebRequest? request);
     Stream? GetResponseStream(WebResponse response);
     string? GetResponseContent(Stream? responseStream);
@@ -131,44 +110,67 @@ public interface IPredictRequestHandler
 
 public class PredictRequestHandler: IPredictRequestHandler
 {
-    public string SavedImageFolderPath {get;} = "../Public/SavedImages";
-    public string CredentialFilePath {get;} = "../Public/Roboflow.txt";
+    private readonly IAmazonS3 _s3Client;
+    //public string SavedImageFolderPath {get;} = "/tmp/SavedImages";
+    public string DisloDetectBucket {get;} = Environment.GetEnvironmentVariable("DISLODETECT_BUCKET") ?? "dislodetect-1766191540";
     public string? FileName {get;set;}
     public string? Confidence {get; set;}
     public string? Overlap {get; set; }
-    public (byte[]? ImageData, string? Message) GetImage()
+    
+    public PredictRequestHandler(IAmazonS3 s3Client)
     {
-        byte[] imgData = null;
-        string message = "Image read.";
+        _s3Client = s3Client;
+    }
+    public async Task<(string? Base64Data, string? Message)> GetImageFromS3Async(string photoUrl)
+    {
         try
         {
-            FileName = Directory.GetFiles(SavedImageFolderPath)[0];
-            byte[]? imgFile = File.ReadAllBytes(FileName);
-            string encoded = Convert.ToBase64String(imgFile);
-            imgData = Encoding.ASCII.GetBytes(encoded);
-        } catch (Exception ex)
-        {
-            message = $"An error occured when reading the saved image: {ex.Message}";
-            Console.WriteLine(message);
+            // Extract S3 key from URL
+            var uri = new Uri(photoUrl);
+            var key = uri.AbsolutePath.TrimStart('/');
+            
+            Console.WriteLine($"Downloading from S3 - Bucket: {DisloDetectBucket}, Key: {key}");
+            
+            var request = new GetObjectRequest
+            {
+                BucketName = DisloDetectBucket,
+                Key = key
+            };
+            
+            using var response = await _s3Client.GetObjectAsync(request);
+            
+            // Read the entire stream into a MemoryStream first
+            using var memoryStream = new MemoryStream();
+            await response.ResponseStream.CopyToAsync(memoryStream);
+            var imageBytes = memoryStream.ToArray();
+            
+            Console.WriteLine($"Downloaded {imageBytes.Length} bytes from S3");
+            Console.WriteLine($"First 10 bytes: {string.Join(",", imageBytes.Take(10))}");
+            
+            // Convert to base64 (no line breaks like CLI)
+            var base64Image = Convert.ToBase64String(imageBytes, Base64FormattingOptions.None);
+            
+            Console.WriteLine($"Base64 first 50 chars: {base64Image.Substring(0, Math.Min(50, base64Image.Length))}");
+            
+            // Set filename for Roboflow
+            FileName = Path.GetFileName(key);
+            
+            return (base64Image, "Image downloaded from S3");
         }
-        return (imgData, message);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"S3 download error: {ex.Message}");
+            return (null, $"Error downloading from S3: {ex.Message}");
+        }
     }
 
-    public (string[]? Credentials, string Message) GetCredentials()
+    public (string? ApiKey, string? DatasetName, string? DatasetVersion) GetCredentials()
     {
-        string[] credentials = null;
-        string message = "An error occure while reading credentials: ";
-        try 
-        {   
-            credentials = File.ReadAllLines(CredentialFilePath);
-            message = "Credentials obtained successfully";
-        } catch (Exception ex)
-        {
-            message += ex.Message;
-            Console.WriteLine(message);
-        }
-
-        return (credentials, message);
+        var apiKey = Environment.GetEnvironmentVariable("ROBOFLOW_API_KEY");
+        var datasetName = Environment.GetEnvironmentVariable("ROBOFLOW_DATASET_NAME");
+        var datasetVersion = Environment.GetEnvironmentVariable("ROBOFLOW_DATASET_VERSION");
+        
+        return (apiKey, datasetName, datasetVersion);
     }
 
     public void SetConfidenceAndOverlap(IFormCollection formCollection)
@@ -178,6 +180,9 @@ public class PredictRequestHandler: IPredictRequestHandler
         Confidence = confidence.ToString();
         Overlap = overlap.ToString();
     }
+    
+    
+
     public (string? RequestURL, string Message) BuildRequestString(IFormCollection formCollection)
     {
         SetConfidenceAndOverlap(formCollection);
@@ -185,27 +190,22 @@ public class PredictRequestHandler: IPredictRequestHandler
         string message = "Building the request string failed";
         try 
         {
+            var (apiKey, datasetName, datasetVersion) = GetCredentials();
+            Console.WriteLine($"Building request with FileName: '{FileName}'");
             
-            string[] lines = GetCredentials().Credentials;
-            string API_KEY = lines[0];
-            string DATASET_NAME = lines[1];
-            string DATASET_VERSION = lines[2];
-            
-            //Contruct the URL
             requestURL =
                     "https://detect.roboflow.com/" +
-                    DATASET_NAME + "/" + DATASET_VERSION +
-                    "?api_key=" + API_KEY +
+                    datasetName + "/" + datasetVersion +
+                    "?api_key=" + apiKey +
                     "&confidence=" + Confidence[..Math.Min(4, Confidence.Length)] +
-                    "&overlap=" + Overlap[..Math.Min(4, Overlap.Length)] +
-                    "&name=" + FileName;
+                    "&overlap=" + Overlap[..Math.Min(4, Overlap.Length)];
+            message = "Request URL built successfully";
         } catch (Exception ex)
         {
-            message = $"Exception occured when reading credentials: {ex.Message}";
+            message = $"Exception occured when building request: {ex.Message}";
             Console.WriteLine(message);
         }
         return (requestURL, message);
-
     }
     public WebRequest? Create(string? requestURL)
     {
@@ -216,16 +216,7 @@ public class PredictRequestHandler: IPredictRequestHandler
         request.ContentType = "application/x-www-form-urlencoded";
         return request;
     }
-    public Stream? GetRequestStream(WebRequest? request, byte[]? data)
-    {    
-        request.ContentLength = data.Length;
-        Stream? stream = request.GetRequestStream();
-        using (stream)
-        {
-            stream.Write(data, 0, data.Length);    
-        }
-        return stream;
-    }
+
     
     public WebResponse? GetResponse(WebRequest? request)
     {
@@ -243,8 +234,8 @@ public class PredictRequestHandler: IPredictRequestHandler
             Console.WriteLine("went in Get Response Content");       
             using StreamReader sr1 = new(responseStream);
             return sr1.ReadToEnd();
-        
     }
+    
     
 }
 

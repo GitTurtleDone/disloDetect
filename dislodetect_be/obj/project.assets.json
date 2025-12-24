@@ -2,6 +2,186 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "Amazon.Lambda.APIGatewayEvents/2.7.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/Amazon.Lambda.APIGatewayEvents.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Amazon.Lambda.APIGatewayEvents.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Amazon.Lambda.ApplicationLoadBalancerEvents/2.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/Amazon.Lambda.ApplicationLoadBalancerEvents.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Amazon.Lambda.ApplicationLoadBalancerEvents.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Amazon.Lambda.AspNetCoreServer/9.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.APIGatewayEvents": "2.7.0",
+          "Amazon.Lambda.ApplicationLoadBalancerEvents": "2.2.0",
+          "Amazon.Lambda.Core": "2.2.0",
+          "Amazon.Lambda.Logging.AspNetCore": "3.1.0",
+          "Amazon.Lambda.Serialization.SystemTextJson": "2.4.1"
+        },
+        "compile": {
+          "lib/net8.0/Amazon.Lambda.AspNetCoreServer.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Amazon.Lambda.AspNetCoreServer.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "Amazon.Lambda.AspNetCoreServer.Hosting/1.7.0": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.APIGatewayEvents": "2.7.0",
+          "Amazon.Lambda.AspNetCoreServer": "9.0.0",
+          "Amazon.Lambda.Core": "2.2.0",
+          "Amazon.Lambda.RuntimeSupport": "1.10.0"
+        },
+        "compile": {
+          "lib/net8.0/Amazon.Lambda.AspNetCoreServer.Hosting.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Amazon.Lambda.AspNetCoreServer.Hosting.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Amazon.Lambda.Core/2.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/Amazon.Lambda.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Amazon.Lambda.Core.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Amazon.Lambda.Logging.AspNetCore/3.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.Core": "1.2.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "2.1.0",
+          "Microsoft.Extensions.Logging": "2.1.0",
+          "Microsoft.Extensions.Logging.Abstractions": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Amazon.Lambda.RuntimeSupport/1.10.0": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.Core": "2.2.0"
+        },
+        "compile": {
+          "lib/net8.0/Amazon.Lambda.RuntimeSupport.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Amazon.Lambda.RuntimeSupport.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Amazon.Lambda.Serialization.SystemTextJson/2.4.1": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.Core": "2.2.0"
+        },
+        "compile": {
+          "lib/net8.0/Amazon.Lambda.Serialization.SystemTextJson.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Amazon.Lambda.Serialization.SystemTextJson.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "AWSSDK.Core/3.7.304.1": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "AWSSDK.Extensions.NETCore.Setup/3.7.301": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "3.7.300",
+          "Microsoft.Extensions.Configuration.Abstractions": "2.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "2.0.0"
+        },
+        "compile": {
+          "lib/net8.0/AWSSDK.Extensions.NETCore.Setup.dll": {
+            "related": ".pdb"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.Extensions.NETCore.Setup.dll": {
+            "related": ".pdb"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.308": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.304.1, 4.0.0)"
+        },
+        "compile": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "Castle.Core/5.1.1": {
         "type": "package",
         "dependencies": {
@@ -59,6 +239,133 @@
         "buildMultiTargeting": {
           "buildMultiTargeting/Microsoft.Extensions.ApiDescription.Server.props": {},
           "buildMultiTargeting/Microsoft.Extensions.ApiDescription.Server.targets": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Configuration.Abstractions/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Configuration.Binder/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.Binder.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.Binder.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Logging/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Binder": "2.1.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.1.0",
+          "Microsoft.Extensions.Logging.Abstractions": "2.1.0",
+          "Microsoft.Extensions.Options": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Logging.Abstractions/2.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Options/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.1.0",
+          "Microsoft.Extensions.Primitives": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Options.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Options.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Primitives/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Memory": "4.5.0",
+          "System.Runtime.CompilerServices.Unsafe": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll": {
+            "related": ".xml"
+          }
         }
       },
       "Microsoft.NET.Test.Sdk/17.11.1": {
@@ -457,6 +764,15 @@
           }
         }
       },
+      "System.Memory/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.1/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/_._": {}
+        }
+      },
       "System.Reflection.Metadata/1.6.0": {
         "type": "package",
         "compile": {
@@ -466,6 +782,19 @@
         },
         "runtime": {
           "lib/netstandard2.0/System.Reflection.Metadata.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {
             "related": ".xml"
           }
         }
@@ -569,6 +898,221 @@
     }
   },
   "libraries": {
+    "Amazon.Lambda.APIGatewayEvents/2.7.0": {
+      "sha512": "HAbdRKLzvUqRg/fItan7up/PWsj6vQfYF+1a4YV6sv1bq5TuK/ra+ndJwWMlzL+MFJzJaHwCmtkyBbh/vz8Oig==",
+      "type": "package",
+      "path": "amazon.lambda.apigatewayevents/2.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "amazon.lambda.apigatewayevents.2.7.0.nupkg.sha512",
+        "amazon.lambda.apigatewayevents.nuspec",
+        "lib/net8.0/Amazon.Lambda.APIGatewayEvents.dll",
+        "lib/net8.0/Amazon.Lambda.APIGatewayEvents.xml",
+        "lib/netcoreapp3.1/Amazon.Lambda.APIGatewayEvents.dll",
+        "lib/netcoreapp3.1/Amazon.Lambda.APIGatewayEvents.xml",
+        "lib/netstandard2.0/Amazon.Lambda.APIGatewayEvents.dll",
+        "lib/netstandard2.0/Amazon.Lambda.APIGatewayEvents.xml"
+      ]
+    },
+    "Amazon.Lambda.ApplicationLoadBalancerEvents/2.2.0": {
+      "sha512": "UtCd9tFuVyED8+DmDKEkdXJbAb/TdHIz51R/CsJCexKerO6HGOG87FGId4Ce9IXE+qjlBGyNQsKCw9oLLNe0hw==",
+      "type": "package",
+      "path": "amazon.lambda.applicationloadbalancerevents/2.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "amazon.lambda.applicationloadbalancerevents.2.2.0.nupkg.sha512",
+        "amazon.lambda.applicationloadbalancerevents.nuspec",
+        "lib/net8.0/Amazon.Lambda.ApplicationLoadBalancerEvents.dll",
+        "lib/net8.0/Amazon.Lambda.ApplicationLoadBalancerEvents.xml",
+        "lib/netcoreapp3.1/Amazon.Lambda.ApplicationLoadBalancerEvents.dll",
+        "lib/netcoreapp3.1/Amazon.Lambda.ApplicationLoadBalancerEvents.xml",
+        "lib/netstandard2.0/Amazon.Lambda.ApplicationLoadBalancerEvents.dll",
+        "lib/netstandard2.0/Amazon.Lambda.ApplicationLoadBalancerEvents.xml"
+      ]
+    },
+    "Amazon.Lambda.AspNetCoreServer/9.0.0": {
+      "sha512": "XNpC9zGXpPHKmPEKdO2BrfbC4ofE3y7Vgm+hTL3sUd38TMunkUzNt0p/RdB6FDNd3CcQv7yFYB7l8sReZrTB0Q==",
+      "type": "package",
+      "path": "amazon.lambda.aspnetcoreserver/9.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "amazon.lambda.aspnetcoreserver.9.0.0.nupkg.sha512",
+        "amazon.lambda.aspnetcoreserver.nuspec",
+        "lib/net6.0/Amazon.Lambda.AspNetCoreServer.dll",
+        "lib/net6.0/Amazon.Lambda.AspNetCoreServer.xml",
+        "lib/net8.0/Amazon.Lambda.AspNetCoreServer.dll",
+        "lib/net8.0/Amazon.Lambda.AspNetCoreServer.xml"
+      ]
+    },
+    "Amazon.Lambda.AspNetCoreServer.Hosting/1.7.0": {
+      "sha512": "lcDSykjJwDqDO3Jb/VZNmXEIRIWBMemexo3i0ZH8Vlhn5E6hyzpxdfO1afI9McZ2SVmSjA5oOzZ2NFzw0ihqQg==",
+      "type": "package",
+      "path": "amazon.lambda.aspnetcoreserver.hosting/1.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "amazon.lambda.aspnetcoreserver.hosting.1.7.0.nupkg.sha512",
+        "amazon.lambda.aspnetcoreserver.hosting.nuspec",
+        "lib/net6.0/Amazon.Lambda.AspNetCoreServer.Hosting.dll",
+        "lib/net6.0/Amazon.Lambda.AspNetCoreServer.Hosting.xml",
+        "lib/net8.0/Amazon.Lambda.AspNetCoreServer.Hosting.dll",
+        "lib/net8.0/Amazon.Lambda.AspNetCoreServer.Hosting.xml"
+      ]
+    },
+    "Amazon.Lambda.Core/2.2.0": {
+      "sha512": "DHqKeD1CYocP0t1dJC/NaXfu+5k6AoqnQ1Hlu/J2mXpLpCyeJfY+tIqT5fpruDarUlU0NtdIH8zSkCjeinyb1A==",
+      "type": "package",
+      "path": "amazon.lambda.core/2.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "amazon.lambda.core.2.2.0.nupkg.sha512",
+        "amazon.lambda.core.nuspec",
+        "lib/net6.0/Amazon.Lambda.Core.dll",
+        "lib/net6.0/Amazon.Lambda.Core.xml",
+        "lib/net8.0/Amazon.Lambda.Core.dll",
+        "lib/net8.0/Amazon.Lambda.Core.xml",
+        "lib/netstandard2.0/Amazon.Lambda.Core.dll",
+        "lib/netstandard2.0/Amazon.Lambda.Core.xml"
+      ]
+    },
+    "Amazon.Lambda.Logging.AspNetCore/3.1.0": {
+      "sha512": "4SD+db3WUBMTl+0p/4C2/zalkG2gMFc9PYwLv4UGPkq6WUlek9hmom0igKkcGY5/1uprEdG/zQ5abKUfs6z0dQ==",
+      "type": "package",
+      "path": "amazon.lambda.logging.aspnetcore/3.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "amazon.lambda.logging.aspnetcore.3.1.0.nupkg.sha512",
+        "amazon.lambda.logging.aspnetcore.nuspec",
+        "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.dll",
+        "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.xml"
+      ]
+    },
+    "Amazon.Lambda.RuntimeSupport/1.10.0": {
+      "sha512": "J1NdaUV24sWALmCjzJJ6vezskeeH2NxJU7ao86rgdzW+AcgnhYjIULuKQNAx6fTl8AP/8acFsq7Jp7k156hh4A==",
+      "type": "package",
+      "path": "amazon.lambda.runtimesupport/1.10.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "amazon.lambda.runtimesupport.1.10.0.nupkg.sha512",
+        "amazon.lambda.runtimesupport.nuspec",
+        "lib/net5.0/Amazon.Lambda.RuntimeSupport.dll",
+        "lib/net5.0/Amazon.Lambda.RuntimeSupport.xml",
+        "lib/net6.0/Amazon.Lambda.RuntimeSupport.dll",
+        "lib/net6.0/Amazon.Lambda.RuntimeSupport.xml",
+        "lib/net8.0/Amazon.Lambda.RuntimeSupport.dll",
+        "lib/net8.0/Amazon.Lambda.RuntimeSupport.xml",
+        "lib/netstandard2.0/Amazon.Lambda.RuntimeSupport.dll",
+        "lib/netstandard2.0/Amazon.Lambda.RuntimeSupport.xml"
+      ]
+    },
+    "Amazon.Lambda.Serialization.SystemTextJson/2.4.1": {
+      "sha512": "X06Z8zPDZJS/xAoAntSqsxOoSSKKFJMg+0QGPRtlPt1mbP19HFXlXn+q+XqHdVWWFsiH/r7KbDIICr0nsrlwug==",
+      "type": "package",
+      "path": "amazon.lambda.serialization.systemtextjson/2.4.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "amazon.lambda.serialization.systemtextjson.2.4.1.nupkg.sha512",
+        "amazon.lambda.serialization.systemtextjson.nuspec",
+        "lib/net6.0/Amazon.Lambda.Serialization.SystemTextJson.dll",
+        "lib/net6.0/Amazon.Lambda.Serialization.SystemTextJson.xml",
+        "lib/net8.0/Amazon.Lambda.Serialization.SystemTextJson.dll",
+        "lib/net8.0/Amazon.Lambda.Serialization.SystemTextJson.xml",
+        "lib/netcoreapp3.1/Amazon.Lambda.Serialization.SystemTextJson.dll",
+        "lib/netcoreapp3.1/Amazon.Lambda.Serialization.SystemTextJson.xml"
+      ]
+    },
+    "AWSSDK.Core/3.7.304.1": {
+      "sha512": "O/gyE5ptF5zEc3QDk3JI3+AOgBfRfmg6eLH5z3x7hUPmV1Wxu0V4Fm86FSyT6czRviMmQGY0q0SVMbWRbP4vDA==",
+      "type": "package",
+      "path": "awssdk.core/3.7.304.1",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "awssdk.core.3.7.304.1.nupkg.sha512",
+        "awssdk.core.nuspec",
+        "images/AWSLogo.png",
+        "lib/net35/AWSSDK.Core.dll",
+        "lib/net35/AWSSDK.Core.pdb",
+        "lib/net35/AWSSDK.Core.xml",
+        "lib/net45/AWSSDK.Core.dll",
+        "lib/net45/AWSSDK.Core.pdb",
+        "lib/net45/AWSSDK.Core.xml",
+        "lib/net8.0/AWSSDK.Core.dll",
+        "lib/net8.0/AWSSDK.Core.pdb",
+        "lib/net8.0/AWSSDK.Core.xml",
+        "lib/netcoreapp3.1/AWSSDK.Core.dll",
+        "lib/netcoreapp3.1/AWSSDK.Core.pdb",
+        "lib/netcoreapp3.1/AWSSDK.Core.xml",
+        "lib/netstandard2.0/AWSSDK.Core.dll",
+        "lib/netstandard2.0/AWSSDK.Core.pdb",
+        "lib/netstandard2.0/AWSSDK.Core.xml",
+        "tools/account-management.ps1"
+      ]
+    },
+    "AWSSDK.Extensions.NETCore.Setup/3.7.301": {
+      "sha512": "hXejqa+G72kVCSmpKlNVWDEqa8KVWOFL/asgoE2mairQOnmTCv6vMxaXjJ0nQaad5/21zTdKDIfDiki5YTne1Q==",
+      "type": "package",
+      "path": "awssdk.extensions.netcore.setup/3.7.301",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "awssdk.extensions.netcore.setup.3.7.301.nupkg.sha512",
+        "awssdk.extensions.netcore.setup.nuspec",
+        "images/AWSLogo.png",
+        "lib/net8.0/AWSSDK.Extensions.NETCore.Setup.dll",
+        "lib/net8.0/AWSSDK.Extensions.NETCore.Setup.pdb",
+        "lib/netcoreapp3.1/AWSSDK.Extensions.NETCore.Setup.dll",
+        "lib/netcoreapp3.1/AWSSDK.Extensions.NETCore.Setup.pdb",
+        "lib/netstandard2.0/AWSSDK.Extensions.NETCore.Setup.dll",
+        "lib/netstandard2.0/AWSSDK.Extensions.NETCore.Setup.pdb"
+      ]
+    },
+    "AWSSDK.S3/3.7.308": {
+      "sha512": "U4LWi1yTKVK6IFHWQc4anKPJKXj9dPN+dT1oXto4ndXXlr+DVzm9dULkquyXBjAHlr6jf339ojuYlE6t9Mk6pQ==",
+      "type": "package",
+      "path": "awssdk.s3/3.7.308",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "analyzers/dotnet/cs/AWSSDK.S3.CodeAnalysis.dll",
+        "analyzers/dotnet/cs/SharedAnalysisCode.dll",
+        "awssdk.s3.3.7.308.nupkg.sha512",
+        "awssdk.s3.nuspec",
+        "images/AWSLogo.png",
+        "lib/net35/AWSSDK.S3.dll",
+        "lib/net35/AWSSDK.S3.pdb",
+        "lib/net35/AWSSDK.S3.xml",
+        "lib/net45/AWSSDK.S3.dll",
+        "lib/net45/AWSSDK.S3.pdb",
+        "lib/net45/AWSSDK.S3.xml",
+        "lib/net8.0/AWSSDK.S3.dll",
+        "lib/net8.0/AWSSDK.S3.pdb",
+        "lib/net8.0/AWSSDK.S3.xml",
+        "lib/netcoreapp3.1/AWSSDK.S3.dll",
+        "lib/netcoreapp3.1/AWSSDK.S3.pdb",
+        "lib/netcoreapp3.1/AWSSDK.S3.xml",
+        "lib/netstandard2.0/AWSSDK.S3.dll",
+        "lib/netstandard2.0/AWSSDK.S3.pdb",
+        "lib/netstandard2.0/AWSSDK.S3.xml",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
     "Castle.Core/5.1.1": {
       "sha512": "rpYtIczkzGpf+EkZgDr9CClTdemhsrwA/W5hMoPjLkRFnXzH44zDLoovXeKtmxb1ykXK9aJVODSpiJml8CTw2g==",
       "type": "package",
@@ -903,6 +1447,110 @@
         "tools/netcoreapp2.1/GetDocument.Insider.dll",
         "tools/netcoreapp2.1/GetDocument.Insider.runtimeconfig.json",
         "tools/netcoreapp2.1/System.Diagnostics.DiagnosticSource.dll"
+      ]
+    },
+    "Microsoft.Extensions.Configuration/2.1.0": {
+      "sha512": "SS8ce1GYQTkZoOq5bskqQ+m7xiXQjnKRiGfVNZkkX2SX0HpXNRsKnSUaywRRuCje3v2KT9xeacsM3J9/G2exsQ==",
+      "type": "package",
+      "path": "microsoft.extensions.configuration/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Configuration.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Configuration.xml",
+        "microsoft.extensions.configuration.2.1.0.nupkg.sha512",
+        "microsoft.extensions.configuration.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.Abstractions/2.1.0": {
+      "sha512": "lMmUjAKvY9r6QmxCS15iSb6ulhwnh0zp44NtnVJ+HIDLFmu4iej41U+dU58On8NRezmlgRXiQtLnBeZSzYNKQg==",
+      "type": "package",
+      "path": "microsoft.extensions.configuration.abstractions/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Configuration.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Configuration.Abstractions.xml",
+        "microsoft.extensions.configuration.abstractions.2.1.0.nupkg.sha512",
+        "microsoft.extensions.configuration.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.Binder/2.1.0": {
+      "sha512": "Fls0O54Ielz1DiVYpcmiUpeizN1iKGGI5yAWAoShfmUvMcQ8jAGOK1a+DaflHA5hN9IOKvmSos0yewDYAIY0ZA==",
+      "type": "package",
+      "path": "microsoft.extensions.configuration.binder/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Configuration.Binder.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Configuration.Binder.xml",
+        "microsoft.extensions.configuration.binder.2.1.0.nupkg.sha512",
+        "microsoft.extensions.configuration.binder.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.0": {
+      "sha512": "8/CtASu80UIoyG+r8FstrmZW5GLtXxzoYpjj3jV0FKZCL5CiFgSH3pAmqut/dC68mu7N1bU6v0UtKKL3gCUQGQ==",
+      "type": "package",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "microsoft.extensions.dependencyinjection.abstractions.2.1.0.nupkg.sha512",
+        "microsoft.extensions.dependencyinjection.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Logging/2.1.0": {
+      "sha512": "kuZbZMMHb7ibzhLdn9/R1+PAAFKntlF10tOw4loB8VuQkHvSrBE6IzW1rhBLsEdmLXOgi2zFbwcXFrxzSM6ybA==",
+      "type": "package",
+      "path": "microsoft.extensions.logging/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.xml",
+        "microsoft.extensions.logging.2.1.0.nupkg.sha512",
+        "microsoft.extensions.logging.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Logging.Abstractions/2.1.0": {
+      "sha512": "GfD2VtvN9z1W+m6pZZe98yh9VWTSdNY2dZSxtca9uFIY6aBI6twvskMvLO/ktClBOTQmAov/7Em+IWFlHepa0A==",
+      "type": "package",
+      "path": "microsoft.extensions.logging.abstractions/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.xml",
+        "microsoft.extensions.logging.abstractions.2.1.0.nupkg.sha512",
+        "microsoft.extensions.logging.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Options/2.1.0": {
+      "sha512": "VOM1pPMi9+7/4Vc9aPLU8btHOBQy1+AvpqxLxFI2OVtqGv+1klPaV59g9R6aSt2U7ijfB3TjvAO4Tc/cn9/hxA==",
+      "type": "package",
+      "path": "microsoft.extensions.options/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Options.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Options.xml",
+        "microsoft.extensions.options.2.1.0.nupkg.sha512",
+        "microsoft.extensions.options.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Primitives/2.1.0": {
+      "sha512": "gMwH6wgWOPfyfLfMLEP+ZF7/MSJq35e0xxKEYUjt8veEznY45nBVqdfI876+9SFQq2ChcqKf2UyYc2XYj2v27w==",
+      "type": "package",
+      "path": "microsoft.extensions.primitives/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Primitives.xml",
+        "microsoft.extensions.primitives.2.1.0.nupkg.sha512",
+        "microsoft.extensions.primitives.nuspec"
       ]
     },
     "Microsoft.NET.Test.Sdk/17.11.1": {
@@ -1268,6 +1916,45 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "System.Memory/4.5.0": {
+      "sha512": "m0psCSpUxTGfvwyO0i03ajXVhgBqyXlibXz0Mo1dtKGjaHrXFLnuQ8rNBTmWRqbfRjr4eC6Wah4X5FfuFDu5og==",
+      "type": "package",
+      "path": "system.memory/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/netcoreapp2.1/_._",
+        "lib/netstandard1.1/System.Memory.dll",
+        "lib/netstandard1.1/System.Memory.xml",
+        "lib/netstandard2.0/System.Memory.dll",
+        "lib/netstandard2.0/System.Memory.xml",
+        "lib/uap10.0.16300/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/netcoreapp2.1/_._",
+        "ref/netstandard1.1/System.Memory.dll",
+        "ref/netstandard1.1/System.Memory.xml",
+        "ref/netstandard2.0/System.Memory.dll",
+        "ref/netstandard2.0/System.Memory.xml",
+        "ref/uap10.0.16300/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.memory.4.5.0.nupkg.sha512",
+        "system.memory.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
     "System.Reflection.Metadata/1.6.0": {
       "sha512": "COC1aiAJjCoA5GBF+QKL2uLqEBew4JsCkQmoHKbN3TlOZKa2fKLz5CpiRQKDz0RsAOEGsVKqOD5bomsXq/4STQ==",
       "type": "package",
@@ -1285,6 +1972,33 @@
         "lib/portable-net45+win8/System.Reflection.Metadata.xml",
         "system.reflection.metadata.1.6.0.nupkg.sha512",
         "system.reflection.metadata.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "System.Runtime.CompilerServices.Unsafe/4.5.0": {
+      "sha512": "YrzNWduCDHhUaSRBxHxL11UkM2fD6y8hITHis4/LbQZ6vj3vdRjoH3IoPWWC9uDXK2wHIqn+b5gv1Np/VKyM1g==",
+      "type": "package",
+      "path": "system.runtime.compilerservices.unsafe/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "lib/uap10.0.16300/_._",
+        "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "ref/uap10.0.16300/_._",
+        "system.runtime.compilerservices.unsafe.4.5.0.nupkg.sha512",
+        "system.runtime.compilerservices.unsafe.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
@@ -1436,6 +2150,11 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "AWSSDK.Extensions.NETCore.Setup >= 3.7.301",
+      "AWSSDK.S3 >= 3.7.308",
+      "Amazon.Lambda.AspNetCoreServer.Hosting >= 1.7.0",
+      "Amazon.Lambda.Core >= 2.2.0",
+      "Amazon.Lambda.Serialization.SystemTextJson >= 2.4.1",
       "Microsoft.AspNetCore.OpenApi >= 8.0.7",
       "Microsoft.NET.Test.Sdk >= 17.11.1",
       "Moq >= 4.20.72",
@@ -1446,32 +2165,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gtd19\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/home/giang/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\dislodetect_be.csproj",
+      "projectUniqueName": "/home/giang/Programming/AI/disloDetect/dislodetect_be/dislodetect_be.csproj",
       "projectName": "dislodetect_be",
-      "projectPath": "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\dislodetect_be.csproj",
-      "packagesPath": "C:\\Users\\gtd19\\.nuget\\packages\\",
-      "outputPath": "\\\\wsl.localhost\\Ubuntu\\home\\giang\\Programming\\AI\\disloDetect\\dislodetect_be\\obj\\",
+      "projectPath": "/home/giang/Programming/AI/disloDetect/dislodetect_be/dislodetect_be.csproj",
+      "packagesPath": "/home/giang/.nuget/packages/",
+      "outputPath": "/home/giang/Programming/AI/disloDetect/dislodetect_be/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\gtd19\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/giang/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1484,18 +2195,32 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "AWSSDK.Extensions.NETCore.Setup": {
+            "target": "Package",
+            "version": "[3.7.301, )"
+          },
+          "AWSSDK.S3": {
+            "target": "Package",
+            "version": "[3.7.308, )"
+          },
+          "Amazon.Lambda.AspNetCoreServer.Hosting": {
+            "target": "Package",
+            "version": "[1.7.0, )"
+          },
+          "Amazon.Lambda.Core": {
+            "target": "Package",
+            "version": "[2.2.0, )"
+          },
+          "Amazon.Lambda.Serialization.SystemTextJson": {
+            "target": "Package",
+            "version": "[2.4.1, )"
+          },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[8.0.7, )"
@@ -1546,7 +2271,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
