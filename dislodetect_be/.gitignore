@@ -6,10 +6,12 @@ Roboflow.txt
 packaged.yaml
 bin/
 obj/
-
+build/
+node_modules/
+publish/
 # AWS files
 .aws/
-.template.yaml
-.packaged.yaml
-.deploy-lambda.sh
-.deploy-cli.sh
+template.yaml
+packaged.yaml
+deploy-lambda.sh
+deploy-cli.sh
