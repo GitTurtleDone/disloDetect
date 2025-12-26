@@ -2,4 +2,4 @@
 ./cert.pem
 ./key.pem
 .env
-.local-app-test.py
+local-app-test.py
