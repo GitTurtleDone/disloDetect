@@ -1,89 +1,154 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using Xunit;
 using dislodetect_be.Controllers;
-using Microsoft.AspNetCore.Mvc;
- using Moq;
+using System.Threading.Tasks;
+using System.IO;
 using System.Text;
+using Amazon.S3;
+using Microsoft.Extensions.Primitives;
 
-public class UploadPhotoFileControllerTests
+namespace dislodetect_be.tests.ControllerTests
 {
-    private Mock<IFormFile> _mockPhotoFile;
-    private Mock<IFormCollection> _mockFormCollection;
-    private Mock<HttpRequest> _mockHttpRequest;
-    private Mock<HttpContext> _mockHttpContext;
-    private UploadPhotoFileController _mockUploadPhotoFileController;
-
-    
-
-    public UploadPhotoFileControllerTests ()
+    public class UploadPhotoFileControllerTests
     {
-        _mockPhotoFile = new Mock<IFormFile>();
-        _mockFormCollection = new Mock<IFormCollection>();
-        _mockHttpRequest = new Mock<HttpRequest>();
-        _mockHttpContext = new Mock<HttpContext>();
-        _mockUploadPhotoFileController = new UploadPhotoFileController();
-        
-
-    }
-    private void SetUploadPhotoFile (string photoFileName, string? mockPhotoFileContent, bool usePhotoAllowed)
-    {
-        var photoContent = Array.Empty<byte>();
-        if (mockPhotoFileContent !=null) // && mockPhotoFileContent != ""
+        private readonly Mock<IUploadPhotoFileRequestHandler> _mockHandler;
+        private readonly UploadPhotoFileController _controller;
+        public UploadPhotoFileControllerTests()
         {
-            photoContent = Encoding.UTF8.GetBytes(mockPhotoFileContent);
-        };
-       
-        var stream = new MemoryStream(photoContent);
-        _mockPhotoFile.Setup(f => f.FileName).Returns(photoFileName);
-        _mockPhotoFile.Setup(f => f.Length).Returns(stream.Length); 
-        _mockPhotoFile.Setup(f => f.ContentType).Returns("image/jpeg");
-        _mockPhotoFile.Setup(f => f.OpenReadStream()).Returns(stream);
-        _mockPhotoFile.Setup(f => f.CopyToAsync(It.IsAny<Stream>(), default))
-        .Callback<Stream, CancellationToken>((s,t) => stream.CopyToAsync(s,t))
-        .Returns(Task.CompletedTask);
-        var fileCollection = new FormFileCollection {_mockPhotoFile.Object}; 
-        _mockFormCollection.Setup(c => c.Files).Returns(fileCollection);
-
-        
-        _mockFormCollection.Setup(c => c["usePhotoAllowed"]).Returns(usePhotoAllowed.ToString().ToLower());
-        _mockHttpRequest.Setup (r => r.ReadFormAsync(default)).ReturnsAsync(_mockFormCollection.Object);
-        _mockHttpContext.Setup(c => c.Request).Returns(_mockHttpRequest.Object);
-        _mockUploadPhotoFileController.ControllerContext = new ControllerContext
+            _mockHandler = new Mock<IUploadPhotoFileRequestHandler>();
+            _controller = new UploadPhotoFileController(_mockHandler.Object);
+        }
+        [Fact]
+        public async Task Upload_NoContentRequest_ReturnsBadRequest()
         {
-            HttpContext = _mockHttpContext.Object
-        };
-    }
+            //Arrange
+            var request = new Mock<HttpRequest>();
+            request.Setup(r => r.HasFormContentType).Returns(false);
+            var context = new Mock<HttpContext>();  
+            context.Setup(c => c.Request).Returns(request.Object);
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context.Object
+            };
+            //Act
+            var result = await _controller.Upload();
+            //Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Unsupported content type.", badRequestResult.Value);
+        }
+        [Fact]
+        public async Task Upload_EmptyFile_ReturnsBadRequest()
+        {
+            //Arrange
+            var request = new Mock<HttpRequest>();
+            request.Setup(r => r.HasFormContentType).Returns(true);
+            var formFileCollection = new FormFileCollection()
+                {
+                    new FormFile(Stream.Null, 0, 0, "file", "empty.jpg") // Empty file
+                };
     
+            var formCollection = new FormCollection(new System.Collections.Generic.Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(), formFileCollection);
+            request.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
+            
+            var context = new Mock<HttpContext>();  
+            context.Setup(c => c.Request).Returns(request.Object);
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context.Object
+            };
+            //Act
+            var result = await _controller.Upload();
+            //Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("File is empty or missing.", badRequestResult.Value);
+        }
+        [Fact]
+        public async Task Upload_ValidFile_FalseUsePhotoAllowed_ReturnsOk()
+        {
+            //Arrange
+            var request = new Mock<HttpRequest>();
+            request.Setup(r => r.HasFormContentType).Returns(true);
+            var fileContent = "This is a test file";
+            var fileName = "test.jpg";
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent));
+            var formFileCollection = new FormFileCollection()
+                {
+                    new FormFile(stream, 0, stream.Length, "file", fileName)
+                };
     
-    [Fact]
-    public async Task ReturnOK_FileNotEmpty_UsePhotoAllowed()
-    {
-        //Arrange
-        SetUploadPhotoFile("test.jpg", "fake photo content", true);
-        //Act
-        var result = await _mockUploadPhotoFileController.Upload();
-        //Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal("Photo uploaded and will be used for training", okResult.Value);
+            var formCollection = new FormCollection(
+                new System.Collections.Generic.Dictionary<string, Microsoft.Extensions.Primitives.StringValues>
+                {
+                    { "usePhotoAllowed", "false" }
+                }, 
+                formFileCollection);
+            request.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
+            
+            var context = new Mock<HttpContext>();  
+            context.Setup(c => c.Request).Returns(request.Object);
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context.Object
+            };
+            _mockHandler.Setup(h => h.ClearSessionFolderAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
+            _mockHandler.Setup(h => h.SaveImageToS3Async(It.IsAny<IFormFile>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+            _mockHandler.Setup(h => h.DisloDetectBucket).Returns("test-bucket");
+            //Act
+            var result = await _controller.Upload();
+            //Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var responseMessage = okResult.Value as dynamic;
+            var fileNameResponse = responseMessage.fileName as string;
+            var sessionId = responseMessage.sessionId as string;
+            var photoUrl = responseMessage.photoUrl as string;
 
+            Assert.NotNull(fileNameResponse);
+            Assert.NotNull(sessionId);
+            Assert.Contains(fileName, fileNameResponse);
+            Assert.Contains("test-bucket", photoUrl);
+        }
+        
+        [Fact]
+        public async Task Upload_ValidFile_TrueUsePhotoAllowed_ReturnsOk()
+        {
+            //Arrange
+
+            var request = new Mock<HttpRequest>();
+            request.Setup(r => r.HasFormContentType).Returns(true);
+            var fileName = "test.jpg";
+            var fileContent = "This is a test file";
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent));
+            var formFile = new FormFile(stream, 0, stream.Length, "file", fileName);
+               
+            var formCollection = new FormCollection
+            (
+                new Dictionary<string, StringValues>
+                {
+                    { "usePhotoAllowed", "true" }
+                },
+                new FormFileCollection { formFile }
+                
+            );
+
+            request.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
+            var context = new Mock<HttpContext>();
+            context.Setup(c => c.Request).Returns(request.Object);
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context.Object
+            };
+            _mockHandler.Setup(h => h.SaveImageToS3Async(It.IsAny<IFormFile>(), It.IsAny<string>(), It.IsAny<string>() )).ReturnsAsync(true);
+            _mockHandler.Setup(h => h.SaveForTrainingImageToS3Async(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync(true);
+            _mockHandler.Setup(h => h.DisloDetectBucket).Returns("test-bucket");
+
+            // Act
+            var result = await _controller.Upload();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            _mockHandler.Verify(h => h.SaveForTrainingImageToS3Async(It.IsAny<IFormFile>(), It.IsAny<string>()), Times.Once);
+        }
     }
-
-    [Fact]
-    public async Task ReturnOK_FileNotEmpty_UsePhotoNotAllowed()
-    {
-        SetUploadPhotoFile("test.jpg", "fake photo content", false);
-        var result = await _mockUploadPhotoFileController.Upload();
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal("Photo uploaded", okResult.Value);
-    }
-
-    [Fact]
-    public async Task BadRequest_FileEmptly()
-    {
-        SetUploadPhotoFile("test.jpg", null, true);
-        var result = await _mockUploadPhotoFileController.Upload();
-        var badResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("File is empty.", badResult.Value);
-    }
-    
-
 }

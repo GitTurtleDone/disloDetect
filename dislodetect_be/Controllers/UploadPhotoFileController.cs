@@ -38,7 +38,7 @@ public class UploadPhotoFileController : ControllerBase
             var formCollection = await Request.ReadFormAsync();
             var file = formCollection.Files.GetFile("file");
             
-            if (file == null ||file.Length == 0)
+            if (file == null || file.Length == 0)
                 return BadRequest("File is empty or missing.");
 
             // Use existing sessionId or generate new one
@@ -55,7 +55,7 @@ public class UploadPhotoFileController : ControllerBase
             var useForTraining = formCollection["usePhotoAllowed"] == "true";
             if (useForTraining)
             {
-                await _uploadPhotoFileRequestHandler.SaveForTrainingImageToS3Async(file, fileName);
+                uploaded = await _uploadPhotoFileRequestHandler.SaveForTrainingImageToS3Async(file, fileName);
             }
             
             return uploaded ? Ok(new { 

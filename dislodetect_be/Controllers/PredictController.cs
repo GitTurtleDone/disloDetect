@@ -152,9 +152,6 @@ public class PredictRequestHandler: IPredictRequestHandler
             
             Console.WriteLine($"Base64 first 50 chars: {base64Image.Substring(0, Math.Min(50, base64Image.Length))}");
             
-            // Set filename for Roboflow
-            FileName = Path.GetFileName(key);
-            
             return (base64Image, "Image downloaded from S3");
         }
         catch (Exception ex)
@@ -177,8 +174,8 @@ public class PredictRequestHandler: IPredictRequestHandler
     {
         var confidence = float.Parse(formCollection["confidence"])*100; 
         var overlap = float.Parse(formCollection["overlap"])*100;
-        Confidence = confidence.ToString();
-        Overlap = overlap.ToString();
+        Confidence = confidence.ToString("F1");
+        Overlap = overlap.ToString("F1");
     }
     
     
@@ -197,8 +194,8 @@ public class PredictRequestHandler: IPredictRequestHandler
                     "https://detect.roboflow.com/" +
                     datasetName + "/" + datasetVersion +
                     "?api_key=" + apiKey +
-                    "&confidence=" + Confidence[..Math.Min(4, Confidence.Length)] +
-                    "&overlap=" + Overlap[..Math.Min(4, Overlap.Length)];
+                    "&confidence=" + Confidence+
+                    "&overlap=" + Overlap;
             message = "Request URL built successfully";
         } catch (Exception ex)
         {
