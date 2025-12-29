@@ -8,4 +8,6 @@ torchmetrics==1.4.0.post0
 ultralytics==8.0.202
 boto3
 python-dotenv
+pytest==7.4.3
+pytest-mock==3.12.0
 

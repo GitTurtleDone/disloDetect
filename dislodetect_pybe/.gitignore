@@ -3,3 +3,6 @@
 ./key.pem
 .env
 local-app-test.py
+__pycache__/
+*.pyc
+*.pyo
