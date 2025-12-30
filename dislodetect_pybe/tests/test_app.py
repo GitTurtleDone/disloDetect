@@ -6,9 +6,9 @@ import sys
 import numpy as np
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Patch YOLO before importing app to prevent model loading
-with patch('ultralytics.YOLO'):
-    from app import app
+# Mock ultralytics before importing
+sys.modules['ultralytics'] = MagicMock()
+from app import app
 
 @pytest.fixture
 def client():
