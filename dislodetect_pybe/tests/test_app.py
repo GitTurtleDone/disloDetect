@@ -6,7 +6,8 @@ import sys
 import numpy as np
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Mock ultralytics before importing
+# Mock torch, ultralytics before importing
+sys.modules['torch'] = MagicMock()
 sys.modules['ultralytics'] = MagicMock()
 from app import app
 
