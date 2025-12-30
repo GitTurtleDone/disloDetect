@@ -1,0 +1,59 @@
+name: Deploy Dotnet AWS Lambda
+on:
+  push:
+    branches: [aws-deploy]
+    paths: [dislodetect_be/**, .github/workflows/aws-deploy-dotnet.yml]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-southeast-6
+  DOTNET_VERSION: "8.0"
+  LAMBDA_FUNCTION_NAME: dislodetect-dotnet-api-DisloDetectApi-vS9NM737hzmu
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore dependencies
+        run: dotnet restore dislodetect_be/dislodetect_be.csproj
+      - name: Build
+        run: dotnet build --no-restore dislodetect_be/dislodetect_be.csproj
+      - name: Test
+        run: dotnet test dislodetect_be/ --no-build --verbosity normal
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/aws-deploy' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Amazon Lambda Tools
+        run: dotnet tool install -g Amazon.Lambda.Tools
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Build .NET Lambda function
+        run: |
+          cd dislodetect_be
+          dotnet lambda package --framework net8.0 --configuration Release
+      - name: Deploy .NET Lambda function
+        run: |
+          cd dislodetect_be
+          dotnet lambda deploy-function ${{ env.LAMBDA_FUNCTION_NAME }} \
+            --configuration Release \
+            --framework net8.0 \
+            --region ${{ env.AWS_REGION }} \
+            --timeout 30
