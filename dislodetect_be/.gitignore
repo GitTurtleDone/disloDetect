@@ -9,9 +9,12 @@ obj/
 build/
 node_modules/
 publish/
+*.user
 # AWS files
 .aws/
 template.yaml
 packaged.yaml
 deploy-lambda.sh
 deploy-cli.sh
+
+
