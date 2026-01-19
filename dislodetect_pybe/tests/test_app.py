@@ -161,6 +161,6 @@ def test_predict_with_default_values(client):
         call_args = mock_model.predict.call_args
         assert call_args[1]['conf'] == 0.25  # default confidence
         assert call_args[1]['iou'] == 0.7     # default overlap
-
+# Small change to test GitHub actions
 if __name__ == '__main__':
     pytest.main([__file__])

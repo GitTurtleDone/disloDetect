@@ -23,6 +23,7 @@ namespace dislodetect_be.tests.ControllerTests
         [Fact]
         public async Task Upload_NoContentRequest_ReturnsBadRequest()
         {
+            //Small change to test GitHub actions
             //Arrange
             var request = new Mock<HttpRequest>();
             request.Setup(r => r.HasFormContentType).Returns(false);
