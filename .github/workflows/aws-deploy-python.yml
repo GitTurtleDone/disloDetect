@@ -61,13 +61,13 @@ jobs:
           aws lambda update-function-code \
             --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
             --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          # Wait for code update to complete first
+          aws lambda wait function-updated \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
+
       - name: Deploy Lambda function
         run: |
           aws lambda update-function-configuration \
             --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
             --timeout 30
-          
-          # Wait for update to complete and publish new version
-          aws lambda wait function-updated \
-            --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
-
