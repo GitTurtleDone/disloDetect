@@ -55,5 +55,6 @@ jobs:
           dotnet lambda deploy-function ${{ env.LAMBDA_FUNCTION_NAME }} \
             --configuration Release \
             --framework net8.0 \
+            --function-runtime dotnet8 \
             --region ${{ env.AWS_REGION }} \
             --timeout 30
