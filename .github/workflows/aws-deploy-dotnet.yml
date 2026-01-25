@@ -8,7 +8,7 @@ on:
 env:
   AWS_REGION: ap-southeast-6
   DOTNET_VERSION: "8.0"
-  LAMBDA_FUNCTION_NAME: dislodetect-dotnet-api-DisloDetectApi-vS9NM737hzmu
+  LAMBDA_FUNCTION_NAME: ${{ secrets.AWS_DOTNET_LAMBDA_FUNCTION_NAME }}
 
 jobs:
   test:
@@ -33,8 +33,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Install Amazon Lambda Tools
-        run: dotnet tool install -g Amazon.Lambda.Tools
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -45,16 +43,21 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Build .NET Lambda function
+      - name: Build and package .NET Lambda function
         run: |
           cd dislodetect_be
-          dotnet lambda package --framework net8.0 --configuration Release
+          dotnet publish -c Release -r linux-x64 --self-contained false -o publish
+          cd publish
+          zip -r ../lambda-package.zip .
       - name: Deploy .NET Lambda function
         run: |
-          cd dislodetect_be
-          dotnet lambda deploy-function ${{ env.LAMBDA_FUNCTION_NAME }} \
-            --configuration Release \
-            --framework net8.0 \
-            --function-runtime dotnet8 \
-            --region ${{ env.AWS_REGION }} \
+          aws lambda update-function-code \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
+            --zip-file fileb://dislodetect_be/lambda-package.zip
+
+          aws lambda wait function-updated \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
+
+          aws lambda update-function-configuration \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
             --timeout 30
