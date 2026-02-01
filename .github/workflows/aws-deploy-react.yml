@@ -30,6 +30,8 @@ jobs:
           npm ci
 
       - name: Build React app
+        env:
+          CI: false
         run: |
           cd dislodetect_fe
           npm run build
