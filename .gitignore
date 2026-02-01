@@ -4,3 +4,20 @@ Roboflow.txt
 ./dislodetect_pybe/.venv/
 ./dislodetect_be/obj/
 ./dislodetect_fe/node_modules/
+./Public/Roboflow.txt
+__pycache__/
+*.pyc
+*.pyo
+
+
+# # OS
+# .DS_Store
+# Thumbs.db
+
+# # IDE
+# .vscode/
+# .idea/
+
+
+
+.claude/
