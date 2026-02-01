@@ -6,4 +6,8 @@ torch==2.3.1
 torchvision==0.18.1
 torchmetrics==1.4.0.post0
 ultralytics==8.0.202
+python-dotenv
+pytest==7.4.3
+pytest-mock==3.12.0
 
+    

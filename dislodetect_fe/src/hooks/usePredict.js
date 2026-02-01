@@ -10,6 +10,7 @@ export function usePredict(props) {
     predictRoboflow,
     imgContainerRef,
     photo,
+    photoUrl,
     confidence,
     overlap,
     updateSumBhi,
@@ -22,22 +23,32 @@ export function usePredict(props) {
   const predictBB = async () => {
     setPredicting(true);
     triggerRemoveOldBB();
-    const formData = new FormData();
+
     //formData.append("file", photo);
     console.log(`confidence ${confidence}`);
     console.log(`overlap ${overlap}`);
-    formData.append("confidence", parseFloat(confidence).toFixed(3));
-    formData.append("overlap", parseFloat(overlap).toFixed(3));
 
     try {
       let requestURL = "";
       console.log("predictRoboflow: ", predictRoboflow);
+      let response = null;
       if (predictRoboflow === true) {
         requestURL = `${process.env.REACT_APP_DOTNET_API_URL}/predict`; //  http://localhost:5226
+        const formData = new FormData();
+        formData.append("photoUrl", photoUrl);
+        formData.append("confidence", parseFloat(confidence).toFixed(3));
+        formData.append("overlap", parseFloat(overlap).toFixed(3));
+        response = await axios.post(requestURL, formData);
       } else {
         requestURL = `${process.env.REACT_APP_PYTHON_API_URL}/predict`; //"http://localhost:5000/predict"
+        const dataToBeSent = {
+          photoUrl: photoUrl,
+          confidence: parseFloat(confidence).toFixed(3),
+          overlap: parseFloat(overlap).toFixed(3),
+        };
+        response = await axios.post(requestURL, dataToBeSent);
       }
-      const response = await axios.post(requestURL, formData);
+
       let results = response.data;
       // console.log("Data received: ", results);
 
