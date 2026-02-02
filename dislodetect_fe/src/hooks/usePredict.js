@@ -32,22 +32,16 @@ export function usePredict(props) {
       let requestURL = "";
       console.log("predictRoboflow: ", predictRoboflow);
       let response = null;
+      const formData = new FormData();
+      formData.append("photoUrl", photoUrl);
+      formData.append("confidence", parseFloat(confidence).toFixed(3));
+      formData.append("overlap", parseFloat(overlap).toFixed(3));
       if (predictRoboflow === true) {
         requestURL = `${process.env.REACT_APP_DOTNET_API_URL}/predict`; //  http://localhost:5226
-        const formData = new FormData();
-        formData.append("photoUrl", photoUrl);
-        formData.append("confidence", parseFloat(confidence).toFixed(3));
-        formData.append("overlap", parseFloat(overlap).toFixed(3));
-        response = await axios.post(requestURL, formData);
       } else {
         requestURL = `${process.env.REACT_APP_PYTHON_API_URL}/predict`; //"http://localhost:5000/predict"
-        const dataToBeSent = {
-          photoUrl: photoUrl,
-          confidence: parseFloat(confidence).toFixed(3),
-          overlap: parseFloat(overlap).toFixed(3),
-        };
-        response = await axios.post(requestURL, dataToBeSent);
       }
+      response = await axios.post(requestURL, formData);
 
       let results = response.data;
       // console.log("Data received: ", results);
