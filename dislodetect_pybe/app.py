@@ -45,6 +45,11 @@ imageCounter = len(files) + 1
 confidence = 0.254;
 IoU = 0.7;
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint"""
+    return jsonify({'status': 'healthy', 'timestamp': datetime.now().isoformat()})
+
 @app.route('/')
 def index():
     return render_template('index.html', counter=imageCounter)
@@ -89,11 +94,20 @@ def save_photo():
     
 #     return jsonify({'success': True, 'url': "myurl"})
     
-    
-    
+#model = YOLO('./runs/GCL/train31/weights/best.pt')
 
+# Load model globally (outside handler for reuse)
+model = None
 
-model = YOLO('./runs/GCL/train31/weights/best.pt')
+def load_model():
+    global model
+    if model is None:
+        model = YOLO('./runs/GCL/train31/weights/best.pt')
+    return model
+
+# Load model on import
+load_model()
+
 #-------------do NOT delete these codes -----------------
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 @app.route('/predict', methods=['GET','POST'])
@@ -112,8 +126,13 @@ def predictImage():
     ##---DO NOT DELETE- get request sent from fetch
 
     filePath = os.path.join(app.config['UPLOAD_FOLDER'], os.listdir(saveFolderPath)[0])
-    confidence = float(request.form.get('confidence'))
-    IoU = float(request.form.get('overlap'))
+    if request.is_json:
+        data = request.get_json()
+        confidence = float(data.get('confidence'))
+        IoU = float(data.get('overlap'))
+    else:
+        confidence = float(request.form.get('confidence'))
+        IoU = float(request.form.get('overlap'))
     
     result = model.predict(source=filePath, classes=None, conf=confidence, iou=IoU, device=device)
     returnData = ([result[0].boxes.cls.cpu().numpy().tolist(),
@@ -147,7 +166,7 @@ def predictImage():
 #     customConfiguration = InferenceConfiguration(confidence_threshold= confidence, iou_threshold = IoU)
 #     CLIENT = InferenceHTTPClient(
 #         api_url="https://detect.roboflow.com",
-#         api_key="gf6lCijDiZMJtLqvxQhB"
+#         api_key=os.getenv('ROBOFLOW_API_KEY')
 #     )
 
 #     # infer on a local image
