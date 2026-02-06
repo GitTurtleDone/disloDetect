@@ -48,4 +48,5 @@ jobs:
             --account-name ${{ secrets.AZ_STORAGE_ACCOUNT_NAME }} \
             --source dislodetect_fe/build \
             --destination '$web' \
+            --auth-mode login \
             --overwrite
