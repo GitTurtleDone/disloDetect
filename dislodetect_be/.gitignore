@@ -16,5 +16,6 @@ template.yaml
 packaged.yaml
 deploy-lambda.sh
 deploy-cli.sh
+local.settings.json
 
 

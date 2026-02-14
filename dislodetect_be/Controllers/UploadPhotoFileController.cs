@@ -1,40 +1,39 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Text;
+using Microsoft.Azure.Functions.Worker;
+// using System;
+// using System.IO;
+// using System.Threading.Tasks;
+// using System.Text;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using System.Linq;
+// using System.Linq;
+
 namespace dislodetect_be.Controllers;
 
-
-[ApiController]
-[Route("[controller]")] 
-
-
-public class UploadPhotoFileController : ControllerBase
+public class UploadPhotoFileFunction
 {
     private readonly IUploadPhotoFileRequestHandler _uploadPhotoFileRequestHandler;
     
-    public UploadPhotoFileController(IUploadPhotoFileRequestHandler uploadPhotoFileRequestHandler)
+    public UploadPhotoFileFunction(IUploadPhotoFileRequestHandler uploadPhotoFileRequestHandler)
     {
         _uploadPhotoFileRequestHandler = uploadPhotoFileRequestHandler;
     }
     
-    [HttpPost(Name = "PostUploadPhotoFile")]
-    public async Task<IActionResult> Upload()
+    [Function("UploadPhotoFile")]
+    public async Task<IActionResult> Upload(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UploadPhotoFile")] HttpRequest Request
+    )
     {
         try
         {
             if (!Request.HasFormContentType)
-                return BadRequest("Unsupported content type.");
+                return new BadRequestObjectResult("Unsupported content type.");
             var formCollection = await Request.ReadFormAsync();
             var file = formCollection.Files.GetFile("file");
             
             if (file == null || file.Length == 0)
-                return BadRequest("File is empty or missing.");
+                return new BadRequestObjectResult("File is empty or missing.");
 
             // Use existing sessionId or generate new one
             string sessionId = string.IsNullOrEmpty(formCollection["sessionId"]) 
@@ -53,29 +52,32 @@ public class UploadPhotoFileController : ControllerBase
                 uploaded = await _uploadPhotoFileRequestHandler.SaveForTrainingImageToBlobAsync(file, fileName);
             }
             
-            return uploaded ? Ok(new { 
+            return uploaded ? new OkObjectResult(new { 
                 sessionId, 
                 fileName, 
                 photoUrl = $"https://{_uploadPhotoFileRequestHandler.StorageAccountName}.blob.core.windows.net/{_uploadPhotoFileRequestHandler.ContainerName}/Public/SavedImages/Sessions/{sessionId}/{fileName}"
-            }) : StatusCode(500, "Upload failed");
+            }) : new ObjectResult("Upload failed"){ StatusCode = 500 };
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Upload error: {ex.Message}");
+            return new ObjectResult($"Upload error: {ex.Message}") { StatusCode = 500 };
         }
     }
     
-    [HttpDelete("session/{sessionId}")]
-    public async Task<IActionResult> DeleteSession(string sessionId)
+    [Function("DeleteSession")]
+    public async Task<IActionResult> DeleteSession(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "session/{sessionId}")] HttpRequest Request,
+        string sessionId
+    )
     {
         try
         {
             await _uploadPhotoFileRequestHandler.DeleteSessionAsync(sessionId);
-            return Ok("Session deleted");
+            return new OkObjectResult("Session deleted");
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Delete error: {ex.Message}");
+            return new ObjectResult($"Delete error: {ex.Message}") { StatusCode = 500 };
         }
     }
 }

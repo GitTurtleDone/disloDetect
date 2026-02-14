@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-// using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 using dislodetect_be.Controllers;
@@ -13,11 +13,11 @@ namespace dislodetect_be.tests.ControllerTests
     public class UploadPhotoFileControllerTests
     {
         private readonly Mock<IUploadPhotoFileRequestHandler> _mockHandler;
-        private readonly UploadPhotoFileController _controller;
+        private readonly UploadPhotoFileFunction _function;
         public UploadPhotoFileControllerTests()
         {
             _mockHandler = new Mock<IUploadPhotoFileRequestHandler>();
-            _controller = new UploadPhotoFileController(_mockHandler.Object);
+            _function = new UploadPhotoFileFunction(_mockHandler.Object);
         }
         [Fact]
         public async Task Upload_NoContentRequest_ReturnsBadRequest()
@@ -25,14 +25,8 @@ namespace dislodetect_be.tests.ControllerTests
             //Arrange
             var request = new Mock<HttpRequest>();
             request.Setup(r => r.HasFormContentType).Returns(false);
-            var context = new Mock<HttpContext>();  
-            context.Setup(c => c.Request).Returns(request.Object);
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = context.Object
-            };
             //Act
-            var result = await _controller.Upload();
+            var result = await _function.Upload(request.Object);
             //Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("Unsupported content type.", badRequestResult.Value);
@@ -51,14 +45,8 @@ namespace dislodetect_be.tests.ControllerTests
             var formCollection = new FormCollection(new Dictionary<string, StringValues>(), formFileCollection);
             request.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
             
-            var context = new Mock<HttpContext>();  
-            context.Setup(c => c.Request).Returns(request.Object);
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = context.Object
-            };
             //Act
-            var result = await _controller.Upload();
+            var result = await _function.Upload(request.Object);
             //Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("File is empty or missing.", badRequestResult.Value);
@@ -84,19 +72,12 @@ namespace dislodetect_be.tests.ControllerTests
                 }, 
                 formFileCollection);
             request.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
-            
-            var context = new Mock<HttpContext>();  
-            context.Setup(c => c.Request).Returns(request.Object);
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = context.Object
-            };
             _mockHandler.Setup(h => h.ClearSessionFolderAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
             _mockHandler.Setup(h => h.SaveImageToBlobAsync(It.IsAny<IFormFile>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
             _mockHandler.Setup(h => h.StorageAccountName).Returns("dislodetectstor");
             _mockHandler.Setup(h => h.ContainerName).Returns("dislodetect");
             //Act
-            var result = await _controller.Upload();
+            var result = await _function.Upload(request.Object);
             //Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var responseMessage = okResult.Value as dynamic;
@@ -131,12 +112,6 @@ namespace dislodetect_be.tests.ControllerTests
             );
 
             request.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
-            var context = new Mock<HttpContext>();
-            context.Setup(c => c.Request).Returns(request.Object);
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = context.Object
-            };
             _mockHandler.Setup(h => h.ClearSessionFolderAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
             _mockHandler.Setup(h => h.SaveImageToBlobAsync(It.IsAny<IFormFile>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
             _mockHandler.Setup(h => h.SaveForTrainingImageToBlobAsync(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync(true);
@@ -144,7 +119,7 @@ namespace dislodetect_be.tests.ControllerTests
             _mockHandler.Setup(h => h.ContainerName).Returns("dislodetect");
 
             // Act
-            var result = await _controller.Upload();
+            var result = await _function.Upload(request.Object);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);

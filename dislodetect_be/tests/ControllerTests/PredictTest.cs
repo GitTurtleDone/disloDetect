@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-// using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 using dislodetect_be.Controllers;
@@ -10,12 +10,12 @@ namespace dislodetect_be.tests.ControllerTests
     public class PredictControllerTests
     {
         private readonly Mock<IPredictRequestHandler> _mockHandler;
-        private readonly PredictController _controller;
+        private readonly PredictFunction _function;
 
         public PredictControllerTests()
         {
             _mockHandler = new Mock<IPredictRequestHandler>();
-            _controller = new PredictController(_mockHandler.Object);
+            _function = new PredictFunction(_mockHandler.Object);
         }
 
         [Fact]
@@ -31,19 +31,6 @@ namespace dislodetect_be.tests.ControllerTests
 
             var mockRequest = new Mock<HttpRequest>();
             mockRequest.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
-            
-            var mockResponse = new Mock<HttpResponse>();
-            var mockHeaders = new Mock<IHeaderDictionary>();
-            mockResponse.Setup(r => r.Headers).Returns(mockHeaders.Object);
-
-            var mockContext = new Mock<HttpContext>();
-            mockContext.Setup(c => c.Request).Returns(mockRequest.Object);
-            mockContext.Setup(c => c.Response).Returns(mockResponse.Object);
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = mockContext.Object
-            };
 
             _mockHandler.Setup(h => h.GetImageFromBlobAsync("https://dislodetectstor.blob.core.windows.net/dislodetect/image.jpg"))
                        .ReturnsAsync(("base64data", "Success"));
@@ -52,7 +39,7 @@ namespace dislodetect_be.tests.ControllerTests
                        .Returns(("https://api.roboflow.com/test", "Success"));
 
             // Act
-            var result = await _controller.Predict();
+            var result = await _function.Predict(mockRequest.Object);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -67,21 +54,10 @@ namespace dislodetect_be.tests.ControllerTests
             var mockRequest = new Mock<HttpRequest>();
             mockRequest.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
 
-            var mockResponse = new Mock<HttpResponse>();
-            var mockHeaders = new Mock<IHeaderDictionary>();
-            mockResponse.Setup(r => r.Headers).Returns(mockHeaders.Object);
-
-            var mockContext = new Mock<HttpContext>();
-            mockContext.Setup(c => c.Request).Returns(mockRequest.Object);
-            mockContext.Setup(c => c.Response).Returns(mockResponse.Object);
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = mockContext.Object
-            };
+            
 
             // Act
-            var result = await _controller.Predict();
+            var result = await _function.Predict(mockRequest.Object);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -100,24 +76,13 @@ namespace dislodetect_be.tests.ControllerTests
             var mockRequest = new Mock<HttpRequest>();
             mockRequest.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
 
-            var mockResponse = new Mock<HttpResponse>();
-            var mockHeaders = new Mock<IHeaderDictionary>();
-            mockResponse.Setup(r => r.Headers).Returns(mockHeaders.Object);
-
-            var mockContext = new Mock<HttpContext>();
-            mockContext.Setup(c => c.Request).Returns(mockRequest.Object);
-            mockContext.Setup(c => c.Response).Returns(mockResponse.Object);
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = mockContext.Object
-            };
+            
 
             _mockHandler.Setup(h => h.GetImageFromBlobAsync("https://dislodetectstor.blob.core.windows.net/dislodetect/image.jpg"))
                        .ReturnsAsync((null, "Blob storage error"));
 
             // Act
-            var result = await _controller.Predict();
+            var result = await _function.Predict(mockRequest.Object);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -135,24 +100,12 @@ namespace dislodetect_be.tests.ControllerTests
 
             var mockRequest = new Mock<HttpRequest>();
             mockRequest.Setup(r => r.ReadFormAsync(default)).ReturnsAsync(formCollection);
-            
-            var mockResponse = new Mock<HttpResponse>();
-            var mockHeaders = new Mock<IHeaderDictionary>();
-            mockResponse.Setup(r => r.Headers).Returns(mockHeaders.Object);
-            var mockContext = new Mock<HttpContext>();
-            mockContext.Setup(c => c.Request).Returns(mockRequest.Object);
-            mockContext.Setup(c => c.Response).Returns(mockResponse.Object);
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = mockContext.Object
-            };
 
             _mockHandler.Setup(h => h.GetImageFromBlobAsync("https://dislodetectstor.blob.core.windows.net/dislodetect/image.jpg"))
                     .ThrowsAsync(new Exception("Unexpected error"));
             
             // Act
-            var result = await _controller.Predict();
+            var result = await _function.Predict(mockRequest.Object);
             
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);

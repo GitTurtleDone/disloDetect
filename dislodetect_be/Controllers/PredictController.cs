@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
 using System;
 using System.IO;
 using System.Net;
@@ -7,32 +8,32 @@ using System.Text;
 using Azure.Storage.Blobs;
 namespace dislodetect_be.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class PredictController : ControllerBase
+public class PredictFunction
 {
-    private IPredictRequestHandler _predictRequestHandler;
-    public PredictController(IPredictRequestHandler predictRequestHandler)
+    private readonly IPredictRequestHandler _predictRequestHandler;
+
+    public PredictFunction(IPredictRequestHandler predictRequestHandler)
     {
         _predictRequestHandler = predictRequestHandler;
     }
-    
-    
-    [HttpPost (Name = "PostPredict")]
-    public async Task<IActionResult> Predict()
+
+    [Function("Predict")]
+    public async Task<IActionResult> Predict(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "predict")] HttpRequest req
+    )
     {
         try
         {   
-            var formCollection = await Request.ReadFormAsync();
+            var formCollection = await req.ReadFormAsync();
             string photoUrl = formCollection["photoUrl"];
             if (string.IsNullOrEmpty(photoUrl))
-                return BadRequest("photoUrl is required");
+                return new BadRequestObjectResult("photoUrl is required");
 
             // Get image from Azure Blob Storage
             var (base64Data, message) = await _predictRequestHandler.GetImageFromBlobAsync(photoUrl);
             if (base64Data == null)
             {
-                return BadRequest(message);
+                return new BadRequestObjectResult(message);
             }
             
             // Build request and send to Roboflow
@@ -68,12 +69,11 @@ public class PredictController : ControllerBase
             }
             
             Console.WriteLine(responseContent);
-            return Ok(responseContent);
+            return new OkObjectResult(responseContent);
         } 
         catch (Exception ex)
         {
-            // Console.WriteLine($"General exception: {ex.Message}");
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            return new ObjectResult($"Internal server error: {ex.Message}") { StatusCode = 500 };
         }
     }
 }
