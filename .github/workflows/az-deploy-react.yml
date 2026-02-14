@@ -1,12 +1,13 @@
+# small change to trigger deployment
 name: Deploy React to Azure Blob Storage
 
 on:
   push:
     branches: [az-deploy]
     paths:
-      - 'dislodetect_fe/**'
-      - 'Public/**'
-      - '.github/workflows/az-deploy-react.yml'
+      - "dislodetect_fe/**"
+      - "Public/**"
+      - ".github/workflows/az-deploy-react.yml"
   workflow_dispatch:
 
 jobs:
@@ -20,8 +21,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: dislodetect_fe/package-lock.json
 
       - name: Install dependencies
