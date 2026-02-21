@@ -24,4 +24,5 @@ yarn-error.log*
 
 # favicon design pptx file
 public/FaviconDesign.pptx
+local.settings.json
 
