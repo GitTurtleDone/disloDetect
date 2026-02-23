@@ -6,5 +6,6 @@ local-app-test.py
 __pycache__/
 *.pyc
 *.pyo
+local.settings.json
 # .venv/
 # .pytest_cache/

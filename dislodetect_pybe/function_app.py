@@ -93,7 +93,6 @@ def predict_image(req: func.HttpRequest) -> func.HttpResponse:
             json.dumps(returnData),
             mimetype="application/json"
         )
-
     except Exception as e:
         logging.error(f"Predict error: {str(e)}")   
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)
