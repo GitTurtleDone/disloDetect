@@ -29,7 +29,6 @@ def get_blob_service_client():
     global blob_service_client
     if blob_service_client is None:
         connection_string = os.getenv('AZ_BLOB_CONNECTION_STRING')
-        logging.warning(f"DEBUG connection_string: '{connection_string}'")  
         if not connection_string:
             raise ValueError("AZ_BLOB_CONNECTION_STRING environment variable is not set")
         blob_service_client = BlobServiceClient.from_connection_string(connection_string)
@@ -47,10 +46,6 @@ def health_check(req: func.HttpRequest) -> func.HttpResponse:
         status_code=200,
         mimetype="application/json"
     )
-
-confidence = 0.254
-IoU = 0.7
-
 
 @app.route(route='predict', methods=['GET','POST'])
 def predict_image(req: func.HttpRequest) -> func.HttpResponse:
@@ -86,9 +81,7 @@ def predict_image(req: func.HttpRequest) -> func.HttpResponse:
                 result[0].boxes.conf.cpu().numpy().tolist(),
                 (result[0].boxes.xywhn.cpu().numpy()*100).tolist()])
         # # return bboxes, the last line contains coordinates in percentage
-        print(returnData)
-
-        # returnData = "return data"
+        
         return func.HttpResponse(
             json.dumps(returnData),
             mimetype="application/json"
