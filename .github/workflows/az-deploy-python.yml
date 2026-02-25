@@ -39,7 +39,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.11"
+
+      - name: Install dependencies into package
+        run: pip install \
+          --extra-index-url https://download.pytorch.org/whl/cpu \
+          --target="dislodetect_pybe/.python_packages/lib/site-packages" \
+          -r dislodetect_pybe/requirements.txt
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -51,5 +57,3 @@ jobs:
         with:
           app-name: ${{ secrets.AZ_PYTHON_FUNCTION_NAME }}
           package: dislodetect_pybe
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true

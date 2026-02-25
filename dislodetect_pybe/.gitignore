@@ -7,5 +7,4 @@ __pycache__/
 *.pyc
 *.pyo
 local.settings.json
-# .venv/
-# .pytest_cache/
+.python_packages/
